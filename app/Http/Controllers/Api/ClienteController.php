@@ -3,11 +3,15 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Cliente;
+use App\Models\Banco;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreClienteRequest;
 use App\Http\Resources\ClienteResource;
 use Illuminate\Foundation\Http\FormRequest;
+
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 
 
 class ClienteController extends Controller
@@ -15,10 +19,17 @@ class ClienteController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $clientes = Cliente::all();
-        return ClienteResource::collection($clientes);
+        $aux = $this->changeDatabaseConnection($request);
+        if (!$aux){
+            return response('Token Inválido', 404);
+        }
+        else{
+            $clientes = Cliente::all();
+            $this->rolbackDatabaseConnection();
+            return ClienteResource::collection($clientes);    
+        }    
     }
 
     /**
@@ -34,25 +45,40 @@ class ClienteController extends Controller
      */
     public function store(Request $request)
     {   
-        echo $request;
-        $cliente = Cliente::create($request->all());
-        return new ClienteResource($cliente);
+        $aux = $this->changeDatabaseConnection($request);
+        if(!$aux){
+            return response('Token Inválido', 404);
+        }
+        else{
+            $cliente = Cliente::create($request->all());
+            $this->rolbackDatabaseConnection();
+            return new ClienteResource($cliente);
+        }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show($id, Request $request)
     {
         try {
-            // Buscar cliente pelo ID ou qualquer outra chave única (exemplo: codpessoa)
-            $cliente = Cliente::findOrFail($id);
-
-            // Se o cliente for encontrado, retornamos o recurso
-            return new ClienteResource($cliente);
+            $aux = $this->changeDatabaseConnection($request);
+            if(!$aux){
+                return response('Token Inválido', 404);    
+            }
+            else{
+                $cliente = Cliente::findOrFail($id);
+                if(!$cliente){
+                    response('Cliente não encontrado!', 404);
+                }
+                else{
+                    $this->rolbackDatabaseConnection();
+                    return new ClienteResource($cliente);
+                }
+            }
 
         } catch (ModelNotFoundException $e) {
-            // Caso o cliente não seja encontrado, retornamos um erro 404
+            $this->rolbackDatabaseConnection();
             return response()->json([
                 'message' => 'Cliente não encontrado.'
             ], 404);
@@ -70,18 +96,81 @@ class ClienteController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Cliente $cliente)
+    public function update(Request $request, $id)
     {
-        $cliente->update($request->all());
-        return new ClienteResource($cliente);
+        /*$aux = $this->changeDatabaseConnection($request);
+        if(!$aux){
+            return response('Token Inválido', 404);
+        }
+        else{
+            $cliente->update($request->all());
+            $this->rolbackDatabaseConnection();
+            return new ClienteResource($cliente);
+        }Adicionar Cliente $Cliente */
+        $aux = $this->changeDatabaseConnection($request);
+        if(!$aux){
+            return response('Token Inválido', 404);
+        }
+        else{
+            $cliente = DB::table('clientes')->where('codpessoa', $id)->first();
+            if (!$cliente) {
+                return response('Cliente não encontrado', 404);
+            } 
+            DB::table('clientes')
+            ->where('codpessoa', $id)
+            ->update($request->only(['codpessoa', 'nomepessoa', 'tipopessoa', 'cpfcnpj', 'inscestadual', 'email', 'telefone1', 'telefone2', 'celular1', 'celular2', 'logradouro', 'numero', 'complemento', 'bairro', 'cidade', 'uf', 'cep', 'obs', 'datadocvenc', 'bloqueado', 'obsbloq', 'idvendedor', 'novo']));   
+
+            //$cliente->update($request->all());
+            $this->rolbackDatabaseConnection();
+            return new ClienteResource($cliente);
+        }
+
+
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Cliente $cliente)
+    public function destroy($id, Request $request)
     {
-        $cliente->delete();
-        return response('Erro ao excluir', 204);
+            
+        $aux = $this->changeDatabaseConnection($request);
+        //return $aux;
+        if(!$aux){
+            return response('Token Inválido', 404);
+        }
+        else{
+            $cliente = DB::table('clientes')->where('codpessoa', $id)->first();
+            if (!$cliente) {
+                return response('Cliente não encontrado', 404);
+            } 
+            DB::table('clientes')->where('codpessoa', $id)->delete();
+            //$cliente->delete();
+            $this->rolbackDatabaseConnection();
+            return response('Erro ao excluir', 204);
+        }
+    }
+
+    public function changeDatabaseConnection(Request $request)
+    {
+        $TokenRenovar = $request->header('TokenRenovar');
+        $NomeBanco = Banco::where('TokenRenovar', $TokenRenovar)->Pluck('NomeBanco');
+        $NomeBanco = preg_replace('/["\[\]]/', '', $NomeBanco);
+
+        if($NomeBanco!=null){
+            Config::set('database.connections.mysql.database', $NomeBanco);
+            DB::connection('mysql')->reconnect();
+
+            return $NomeBanco;    
+        }
+        else{
+            return false;
+        }
+    }
+
+    public function rolbackDatabaseConnection()
+    {
+        Config::set('database.connections.mysql.database', 'renovar_bancos');
+        DB::connection('mysql')->reconnect();
     }
 }
