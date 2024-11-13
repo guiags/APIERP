@@ -155,10 +155,17 @@ class ClienteController extends Controller
     {
         $TokenRenovar = $request->header('TokenRenovar');
         $NomeBanco = Banco::where('TokenRenovar', $TokenRenovar)->Pluck('NomeBanco');
+        $UserBanco = Banco::where('TokenRenovar', $TokenRenovar)->Pluck('usuario');
+        $SenhaBanco = Banco::where('TokenRenovar', $TokenRenovar)->Pluck('senha');
+
         $NomeBanco = preg_replace('/["\[\]]/', '', $NomeBanco);
+        $UserBanco = preg_replace('/["\[\]]/', '', $UserBanco);
+        $SenhaBanco = preg_replace('/["\[\]]/', '', $SenhaBanco);
 
         if($NomeBanco!=null){
             Config::set('database.connections.mysql.database', $NomeBanco);
+            Config::set('database.connections.mysql.username', $UserBanco);
+            Config::set('database.connections.mysql.password', $SenhaBanco);
             DB::connection('mysql')->reconnect();
 
             return $NomeBanco;    
@@ -170,7 +177,9 @@ class ClienteController extends Controller
 
     public function rolbackDatabaseConnection()
     {
-        Config::set('database.connections.mysql.database', 'renovar_bancos');
+        Config::set('database.connections.mysql.database', 'renovarp_tokenmobile');
+        Config::set('database.connections.mysql.username', 'renovarp_master');
+        Config::set('database.connections.mysql.password', 'UehUySKE?QGSu9p');
         DB::connection('mysql')->reconnect();
     }
 }
