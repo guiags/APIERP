@@ -69,7 +69,9 @@ class ClienteController extends Controller
             else{
                 $cliente = Cliente::findOrFail($id);
                 if(!$cliente){
-                    response('Cliente não encontrado!', 404);
+                    response('Cliente não encontrado!', 404)->json([
+                        'message' => 'Cliente não encontrado.'
+                    ], 404);
                 }
                 else{
                     $this->rolbackDatabaseConnection();
@@ -80,7 +82,7 @@ class ClienteController extends Controller
         } catch (ModelNotFoundException $e) {
             $this->rolbackDatabaseConnection();
             return response()->json([
-                'message' => 'Cliente não encontrado.'
+                'message' => 'Cliente não encontrado.' + $e
             ], 404);
         }
     }
@@ -150,6 +152,29 @@ class ClienteController extends Controller
             return response('Erro ao excluir', 204);
         }
     }
+
+    public function showByCpfCnpj($cpfcnpj, Request $request)
+    {
+        // Busca o usuário pelo email
+        $aux = $this->changeDatabaseConnection($request);
+        //return $aux;
+         if(!$aux){
+        return response('Token Inválido', 404);
+        }
+        $cliente = Cliente::where('cpfcnpj', $cpfcnpj)->first();
+        $this->rolbackDatabaseConnection();
+        // Verifica se o usuário foi encontrado
+        if ($cliente) {
+
+            return response()->json($cliente);  // Retorna o usuário em formato JSON
+        }
+
+    // Se não encontrar, retorna uma mensagem de erro
+        return response()->json(['codigo' => '404',
+            'message' => 'CPF ou CNPJ nao encontrados.',
+                                ], 404);
+    }
+
 
     public function changeDatabaseConnection(Request $request)
     {

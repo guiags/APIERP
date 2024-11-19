@@ -26,3 +26,5 @@ Route::apiResource('usuarios', UsuarioController::class)->except([
 Route::apiResource('grupo', GrupoController::class)->except([
     'create', 'edit'
 ]);
+
+Route::get('clientes/cpfcnpj/{cpfcnpj}', [ClienteController::class, 'showByCpfCnpj']);
