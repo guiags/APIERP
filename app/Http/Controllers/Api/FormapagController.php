@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Usuario;
+use App\Models\Formapag;
 use App\Models\Banco;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Http\Requests\StoreUsuarioRequest;
-use App\Http\Resources\UsuarioResource;
+use App\Http\Requests\StoreFormapagRequest;
+use App\Http\Resources\FormapagResource;
 use Illuminate\Foundation\Http\FormRequest;
 
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 
-class UsuarioController extends Controller
+class FormapagController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -22,13 +22,15 @@ class UsuarioController extends Controller
     {
         $aux = $this->changeDatabaseConnection($request);
         if (!$aux){
-            return response('Token Inválido', 404);
+            return response()->json(['codigo' => '404',
+                'message' => 'Token Invalido.',
+                                ], 404); 
         }
         else{
-            $usuario = Usuario::all();
+            $formapag = Formapag::all();
             $this->rolbackDatabaseConnection();
-            return UsuarioResource::collection($usuario);    
-        }    
+            return FormapagResource::collection($formapag);    
+        } 
     }
 
     /**
@@ -37,7 +39,7 @@ class UsuarioController extends Controller
     /*public function create()
     {
         //
-    }*/
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -46,40 +48,46 @@ class UsuarioController extends Controller
     {
         $aux = $this->changeDatabaseConnection($request);
         if(!$aux){
-            return response('Token Inválido', 404);
+            return response()->json(['codigo' => '404',
+                'message' => 'Token Invalido.',
+                                ], 404); 
         }
         else{
-            $usuario = Usuario::create($request->all());
+            $formapag = Formapag::create($request->all());
             $this->rolbackDatabaseConnection();
-            return new UsuarioResource($usuario);
+            return new FormapagResource($formapag);
         }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show($id, Request $request)
+    public function show(Request $request, $id)
     {
         try {
             $aux = $this->changeDatabaseConnection($request);
             if(!$aux){
-                return response('Token Inválido', 404);    
+                return response()->json(['codigo' => '404',
+                'message' => 'Token Invalido.',
+                                ], 404);   
             }
             else{
-                $usuario = Usuario::findOrFail($id);
-                if(!$usuario){
-                    response('Usuário não encontrado!', 404);
+                $formapag = Formapag::find($id);
+                if(!$formapag){
+                    return response()->json(['codigo' => '404',
+                    'message' => 'Forma de pagamento nao encontrada.',
+                                        ], 404);
                 }
                 else{
                     $this->rolbackDatabaseConnection();
-                    return new UsuarioResource($usuario);
+                    return new FormapagResource($formapag);
                 }
             }
 
         } catch (ModelNotFoundException $e) {
             $this->rolbackDatabaseConnection();
-            return response()->json([
-                'message' => 'Usuário não encontrado.'
+            return response()->json(['codigo' => '404',
+            'message' => 'Forma de pagamento nao encontrada.',
             ], 404);
         }
     }
@@ -87,10 +95,10 @@ class UsuarioController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    /*public function edit(Usuario $usuario)
+    /*public function edit(Formapag $formapag)
     {
         //
-    }*/
+    }
 
     /**
      * Update the specified resource in storage.
@@ -99,44 +107,31 @@ class UsuarioController extends Controller
     {
         $aux = $this->changeDatabaseConnection($request);
         if(!$aux){
-            return response('Token Inválido', 404);
+            return response()->json(['codigo' => '404',
+            'message' => 'Token Invalido.',
+                                ], 404);
         }
         else{
-            $usuario = DB::table('usuarios')->where('id', $id)->first();
-            if (!$usuario) {
-                return response('Usuário não encontrado', 404);
+            $formapag = DB::table('formaspag')->where('id', $id)->first();
+            if (!$formapag) {
+                return response()->json(['codigo' => '404',
+                'message' => 'Forma de pagamento nao encontrada.',
+                                    ], 404);
             } 
-            DB::table('usuarios')
+            DB::table('formaspag')
             ->where('id', $id)
-            ->update($request->only(['usuario','senha','idvendedor', 'nomevendedor','perccomiss','percdescmax','comisregrpercdesc','comisregrperccomis']));   
+            ->update($request->only(['descricao', 'avista']));   
 
+            //$cliente->update($request->all());
             $this->rolbackDatabaseConnection();
-            return new UsuarioResource($usuario);
+            return new FormapagResource($formapag);
         }
-
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id, Request $request)
-    {
-        $aux = $this->changeDatabaseConnection($request);
-        if(!$aux){
-            return response('Token Inválido', 404);
-        }
-        else{
-            $usuario = DB::table('usuarios')->where('id', $id)->first();
-            if (!$usuario) {
-                return response('Usuário não encontrado', 404);
-            } 
-            DB::table('usuarios')->where('id', $id)->delete();
-            $this->rolbackDatabaseConnection();
-            return response('Erro ao excluir', 204);
-        }
-    }
-
-    public function showByIdVendedor($idvendedor, Request $request)
+    public function destroy(Request $request, $id)
     {
         $aux = $this->changeDatabaseConnection($request);
         if(!$aux){
@@ -144,17 +139,20 @@ class UsuarioController extends Controller
             'message' => 'Token Invalido.',
                                 ], 404);
         }
-        $usuario = Usuario::where('idvendedor', $idvendedor)->first();
-        $this->rolbackDatabaseConnection();
-        if ($usuario) {
-            return response()->json($usuario); 
+        else{
+            $formapag = DB::table('formaspag')->where('id', $id)->first();
+            if (!$formapag) {
+                return response()->json(['codigo' => '404',
+                'message' => 'Forma de pagamento nao encontrada.',
+                                    ], 404);
+            } 
+            DB::table('formaspag')->where('id', $id)->delete();
+            $this->rolbackDatabaseConnection();
+            return response()->json(['codigo' => '204',
+                'message' => 'Forma de pagamento excluida.',
+                                ], 204);
         }
-
-        return response()->json(['codigo' => '404',
-            'message' => 'Id de Vendedor nao encontrados.',
-                                ], 404);
     }
-
 
     public function changeDatabaseConnection(Request $request)
     {
