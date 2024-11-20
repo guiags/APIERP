@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ClienteController;
 use App\Http\Controllers\Api\UsuarioController;
 use App\Http\Controllers\Api\GrupoController;
+use App\Http\Controllers\Api\PlanopagController;
 
 /*Route::get('/user', function (Request $request) {
     return $request->user();
@@ -24,6 +25,10 @@ Route::apiResource('usuarios', UsuarioController::class)->except([
 ]);
 
 Route::apiResource('grupo', GrupoController::class)->except([
+    'create', 'edit'
+]);
+
+Route::apiResource('planospag', PlanopagController::class)->except([
     'create', 'edit'
 ]);
 
