@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\FormapagController;
 use App\Http\Controllers\Api\EmpresaController;
 use App\Http\Controllers\Api\ConfiguracaoController;
 use App\Http\Controllers\Api\ConfigvendedorController;
+use App\Http\Controllers\Api\ProdutoController;
 
 /*Route::get('/user', function (Request $request) {
     return $request->user();
@@ -51,6 +52,11 @@ Route::apiResource('configuracao', ConfiguracaoController::class)->except([
 Route::apiResource('configvendedor', ConfigvendedorController::class)->except([
     'create', 'edit'
 ]);
+
+Route::apiResource('produtos', ProdutoController::class)->except([
+    'create', 'edit'
+]);
+
 
 Route::get('clientes/cpfcnpj/{cpfcnpj}', [ClienteController::class, 'showByCpfCnpj']);
 
