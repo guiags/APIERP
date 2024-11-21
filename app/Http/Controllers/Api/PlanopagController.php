@@ -22,7 +22,7 @@ class PlanopagController extends Controller
     {
         $aux = $this->changeDatabaseConnection($request);
         if (!$aux){
-            return response()->json(['codigo' => '404',
+            return response()->json(['erro' => '404',
                 'message' => 'Token Invalido.',
                                 ], 404); 
         }
@@ -49,7 +49,7 @@ class PlanopagController extends Controller
     {
         $aux = $this->changeDatabaseConnection($request);
         if(!$aux){
-            return response()->json(['codigo' => '404',
+            return response()->json(['erro' => '404',
                 'message' => 'Token Invalido.',
                                 ], 404); 
         }
@@ -68,14 +68,14 @@ class PlanopagController extends Controller
         try {
             $aux = $this->changeDatabaseConnection($request);
             if(!$aux){
-                return response()->json(['codigo' => '404',
+                return response()->json(['erro' => '404',
                 'message' => 'Token Inváalido.',
                                 ], 404);   
             }
             else{
                 $planopag = Planopag::find($id);
                 if(!$planopag){
-                    return response()->json(['codigo' => '404',
+                    return response()->json(['erro' => '404',
                     'message' => 'Plano de pagamento nao encontrado.',
                                         ], 404);
                 }
@@ -87,7 +87,7 @@ class PlanopagController extends Controller
 
         } catch (ModelNotFoundException $e) {
             $this->rolbackDatabaseConnection();
-            return response()->json(['codigo' => '404',
+            return response()->json(['erro' => '404',
             'message' => 'Plano de pagamento nao encontrado.',
             ], 404);
         }
@@ -108,14 +108,14 @@ class PlanopagController extends Controller
     {
         $aux = $this->changeDatabaseConnection($request);
         if(!$aux){
-            return response()->json(['codigo' => '404',
+            return response()->json(['erro' => '404',
             'message' => 'Token Invalido.',
                                 ], 404);
         }
         else{
             $planopag = DB::table('planospag')->where('id', $id)->first();
             if (!$planopag) {
-                return response()->json(['codigo' => '404',
+                return response()->json(['erro' => '404',
                 'message' => 'Plano de pagamento nao encontrado.',
                                     ], 404);
             } 
@@ -143,13 +143,13 @@ class PlanopagController extends Controller
         else{
             $planopag = DB::table('planospag')->where('id', $id)->first();
             if (!$planopag) {
-                return response()->json(['codigo' => '404',
+                return response()->json(['erro' => '404',
                 'message' => 'Plano de pagamento nao encontrado.',
                                     ], 404);
             } 
             DB::table('planospag')->where('id', $id)->delete();
             $this->rolbackDatabaseConnection();
-            return response()->json(['codigo' => '204',
+            return response()->json(['erro' => '204',
                 'message' => 'Plano de pagamento excluido.',
                                 ], 204);
         }

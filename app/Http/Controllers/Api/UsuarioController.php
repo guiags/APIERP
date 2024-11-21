@@ -140,7 +140,7 @@ class UsuarioController extends Controller
     {
         $aux = $this->changeDatabaseConnection($request);
         if(!$aux){
-            return response()->json(['codigo' => '404',
+            return response()->json(['erro' => '404',
             'message' => 'Token Invalido.',
                                 ], 404);
         }
@@ -150,7 +150,7 @@ class UsuarioController extends Controller
             return response()->json($usuario); 
         }
 
-        return response()->json(['codigo' => '404',
+        return response()->json(['erro' => '404',
             'message' => 'Id de Vendedor nao encontrados.',
                                 ], 404);
     }

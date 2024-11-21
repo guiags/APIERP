@@ -22,7 +22,7 @@ class FormapagController extends Controller
     {
         $aux = $this->changeDatabaseConnection($request);
         if (!$aux){
-            return response()->json(['codigo' => '404',
+            return response()->json(['erro' => '404',
                 'message' => 'Token Invalido.',
                                 ], 404); 
         }
@@ -48,7 +48,7 @@ class FormapagController extends Controller
     {
         $aux = $this->changeDatabaseConnection($request);
         if(!$aux){
-            return response()->json(['codigo' => '404',
+            return response()->json(['erro' => '404',
                 'message' => 'Token Invalido.',
                                 ], 404); 
         }
@@ -67,14 +67,14 @@ class FormapagController extends Controller
         try {
             $aux = $this->changeDatabaseConnection($request);
             if(!$aux){
-                return response()->json(['codigo' => '404',
+                return response()->json(['erro' => '404',
                 'message' => 'Token Invalido.',
                                 ], 404);   
             }
             else{
                 $formapag = Formapag::find($id);
                 if(!$formapag){
-                    return response()->json(['codigo' => '404',
+                    return response()->json(['erro' => '404',
                     'message' => 'Forma de pagamento nao encontrada.',
                                         ], 404);
                 }
@@ -86,7 +86,7 @@ class FormapagController extends Controller
 
         } catch (ModelNotFoundException $e) {
             $this->rolbackDatabaseConnection();
-            return response()->json(['codigo' => '404',
+            return response()->json(['erro' => '404',
             'message' => 'Forma de pagamento nao encontrada.',
             ], 404);
         }
@@ -107,14 +107,14 @@ class FormapagController extends Controller
     {
         $aux = $this->changeDatabaseConnection($request);
         if(!$aux){
-            return response()->json(['codigo' => '404',
+            return response()->json(['erro' => '404',
             'message' => 'Token Invalido.',
                                 ], 404);
         }
         else{
             $formapag = DB::table('formaspag')->where('id', $id)->first();
             if (!$formapag) {
-                return response()->json(['codigo' => '404',
+                return response()->json(['erro' => '404',
                 'message' => 'Forma de pagamento nao encontrada.',
                                     ], 404);
             } 
@@ -135,20 +135,20 @@ class FormapagController extends Controller
     {
         $aux = $this->changeDatabaseConnection($request);
         if(!$aux){
-            return response()->json(['codigo' => '404',
+            return response()->json(['erro' => '404',
             'message' => 'Token Invalido.',
                                 ], 404);
         }
         else{
             $formapag = DB::table('formaspag')->where('id', $id)->first();
             if (!$formapag) {
-                return response()->json(['codigo' => '404',
+                return response()->json(['erro' => '404',
                 'message' => 'Forma de pagamento nao encontrada.',
                                     ], 404);
             } 
             DB::table('formaspag')->where('id', $id)->delete();
             $this->rolbackDatabaseConnection();
-            return response()->json(['codigo' => '204',
+            return response()->json(['erro' => '204',
                 'message' => 'Forma de pagamento excluida.',
                                 ], 204);
         }

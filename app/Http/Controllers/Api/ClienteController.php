@@ -170,7 +170,7 @@ class ClienteController extends Controller
         }
 
     // Se não encontrar, retorna uma mensagem de erro
-        return response()->json(['codigo' => '404',
+        return response()->json(['erro' => '404',
             'message' => 'CPF ou CNPJ nao encontrados.',
                                 ], 404);
     }

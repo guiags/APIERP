@@ -8,6 +8,8 @@ use App\Http\Controllers\Api\GrupoController;
 use App\Http\Controllers\Api\PlanopagController;
 use App\Http\Controllers\Api\FormapagController;
 use App\Http\Controllers\Api\EmpresaController;
+use App\Http\Controllers\Api\ConfiguracaoController;
+use App\Http\Controllers\Api\ConfigvendedorController;
 
 /*Route::get('/user', function (Request $request) {
     return $request->user();
@@ -39,6 +41,14 @@ Route::apiResource('formaspag', FormapagController::class)->except([
 ]);
 
 Route::apiResource('empresa', EmpresaController::class)->except([
+    'create', 'edit'
+]);
+
+Route::apiResource('configuracao', ConfiguracaoController::class)->except([
+    'create', 'edit'
+]);
+
+Route::apiResource('configvendedor', ConfigvendedorController::class)->except([
     'create', 'edit'
 ]);
 

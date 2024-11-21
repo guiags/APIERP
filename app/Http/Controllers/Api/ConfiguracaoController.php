@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Empresa;
+use App\Models\Configuracao;
 use App\Models\Banco;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Http\Requests\StoreEmpresaRequest;
-use App\Http\Resources\EmpresaResource;
+use App\Http\Requests\StoreConfiguracaoRequest;
+use App\Http\Resources\ConfiguracaoResource;
 use Illuminate\Foundation\Http\FormRequest;
 
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 
-class EmpresaController extends Controller
+class ConfiguracaoController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -23,14 +23,14 @@ class EmpresaController extends Controller
         $aux = $this->changeDatabaseConnection($request);
         if (!$aux){
             return response()->json(['erro' => '404',
-                'message' => 'Token Invalido.',
-                                ], 404); 
+            'message' => 'Token Invalido.',
+                            ], 404);
         }
         else{
-            $empresa = Empresa::all();
+            $configuracao = Configuracao::all();
             $this->rolbackDatabaseConnection();
-            return EmpresaResource::collection($empresa);    
-        } 
+            return ConfiguracaoResource::collection($configuracao);    
+        }    
     }
 
     /**
@@ -53,9 +53,9 @@ class EmpresaController extends Controller
                                 ], 404); 
         }
         else{
-            $empresa = Empresa::create($request->all());
+            $configuracao = Configuracao::create($request->all());
             $this->rolbackDatabaseConnection();
-            return new EmpresaResource($empresa);
+            return new ConfiguracaoResource($configuracao);
         }
     }
 
@@ -72,22 +72,22 @@ class EmpresaController extends Controller
                                 ], 404);   
             }
             else{
-                $empresa = Empresa::find($id);
-                if(!$empresa){
+                $configuracao = Configuracao::find($id);
+                if(!$configuracao){
                     return response()->json(['erro' => '404',
-                    'message' => 'Empresa nao encontrada.',
+                    'message' => 'Configuracao nao encontrada.',
                                         ], 404);
                 }
                 else{
                     $this->rolbackDatabaseConnection();
-                    return new EmpresaResource($empresa);
+                    return new ConfiguracaoResource($configuracao);
                 }
             }
 
         } catch (ModelNotFoundException $e) {
             $this->rolbackDatabaseConnection();
             return response()->json(['erro' => '404',
-            'message' => 'Empresa nao encontrada.',
+            'message' => 'Configuracao nao encontrada.',
             ], 404);
         }
     }
@@ -95,7 +95,7 @@ class EmpresaController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    /*public function edit(Empresa $empresa)
+    /*public function edit(Configuracao $configuracao)
     {
         //
     }
@@ -112,19 +112,18 @@ class EmpresaController extends Controller
                                 ], 404);
         }
         else{
-            $empresa = DB::table('empresa')->where('id', $id)->first();
-            if (!$empresa) {
+            $configuracao = DB::table('configuracoes')->where('id', $id)->first();
+            if (!$configuracao) {
                 return response()->json(['erro' => '404',
-                'message' => 'Empresa nao encontrada.',
+                'message' => 'Configuracao nao encontrada.',
                                     ], 404);
             } 
-            DB::table('empresa')
+            DB::table('configuracoes')
             ->where('id', $id)
-            ->update($request->only(['nomefantasia', 'endereco', 'bairro', 'cidade', 'uf', 'telefone', 'celular', 'cnpj']));   
+            ->update($request->only(['usacomisregresdesc', 'utilizaindicepreco', 'validaestneg', 'bloqestneg', 'bloqclidebvenc', 'bloqclilimitediasvenc', 'bloqclidiasvencatecor', 'bloqclidiasvencaposcor', 'precocasasdecimais', 'adicobsclinoped', 'carregalistaprodvazia']));   
 
-            //$cliente->update($request->all());
             $this->rolbackDatabaseConnection();
-            return new EmpresaResource($empresa);
+            return new ConfiguracaoResource($configuracao);
         }
     }
 
@@ -140,16 +139,16 @@ class EmpresaController extends Controller
                                 ], 404);
         }
         else{
-            $empresa = DB::table('empresa')->where('id', $id)->first();
-            if (!$empresa) {
+            $configuracao = DB::table('configuracoes')->where('id', $id)->first();
+            if (!$configuracao) {
                 return response()->json(['erro' => '404',
-                'message' => 'Empresa nao encontrada.',
+                'message' => 'Configuracao nao encontrada.',
                                     ], 404);
             } 
-            DB::table('empresa')->where('id', $id)->delete();
+            DB::table('configuracoes')->where('id', $id)->delete();
             $this->rolbackDatabaseConnection();
             return response()->json(['erro' => '204',
-                'message' => 'Empresa excluida.',
+                'message' => 'Configuracao excluida.',
                                 ], 204);
         }
     }
@@ -158,19 +157,10 @@ class EmpresaController extends Controller
     {
         $TokenRenovar = $request->header('TokenRenovar');
         $NomeBanco = Banco::where('TokenRenovar', $TokenRenovar)->Pluck('NomeBanco');
-        //$UserBanco = Banco::where('TokenRenovar', $TokenRenovar)->Pluck('usuario');
-        //$SenhaBanco = Banco::where('TokenRenovar', $TokenRenovar)->Pluck('senha');
-
         $NomeBanco = preg_replace('/["\[\]]/', '', $NomeBanco);
-        //$UserBanco = preg_replace('/["\[\]]/', '', $UserBanco);
-        //$SenhaBanco = preg_replace('/["\[\]]/', '', $SenhaBanco);
-
         if($NomeBanco!=null){
             Config::set('database.connections.mysql.database', $NomeBanco);
-            //Config::set('database.connections.mysql.username', $UserBanco);
-            //Config::set('database.connections.mysql.password', $SenhaBanco);
             DB::connection('mysql')->reconnect();
-
             return $NomeBanco;    
         }
         else{
@@ -181,8 +171,6 @@ class EmpresaController extends Controller
     public function rolbackDatabaseConnection()
     {
         Config::set('database.connections.mysql.database', 'renovarp_tokenmobile');
-        //Config::set('database.connections.mysql.username', 'renovarp_master');
-        //Config::set('database.connections.mysql.password', 'UehUySKE?QGSu9p');
         DB::connection('mysql')->reconnect();
     }
 }
