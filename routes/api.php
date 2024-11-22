@@ -11,6 +11,8 @@ use App\Http\Controllers\Api\EmpresaController;
 use App\Http\Controllers\Api\ConfiguracaoController;
 use App\Http\Controllers\Api\ConfigvendedorController;
 use App\Http\Controllers\Api\ProdutoController;
+use App\Http\Controllers\Api\PedidoController;
+use App\Http\Controllers\Api\HistpedidoController;
 
 /*Route::get('/user', function (Request $request) {
     return $request->user();
@@ -54,6 +56,13 @@ Route::apiResource('configvendedor', ConfigvendedorController::class)->except([
 ]);
 
 Route::apiResource('produtos', ProdutoController::class)->except([
+    'create', 'edit'
+]);
+
+Route::apiResource('pedido', PedidoController::class)->except([
+    'create', 'edit'
+]);
+Route::apiResource('hist_pedido', HistpedidoController::class)->except([
     'create', 'edit'
 ]);
 
