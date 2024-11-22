@@ -27,7 +27,6 @@ class StoreClienteRequest extends FormRequest
             'tipopessoa' => ['required', 'max:1'], 
             'cpfcnpj'  => ['required', 'max:14'], 
             'inscestadual' => ['max:20'], 
-            'email' => ['required'], 
             'telefone1' => ['max:10'], 
             'telefone2' => ['max:10'], 
             'celular1' => ['max:11'], 
@@ -39,10 +38,7 @@ class StoreClienteRequest extends FormRequest
             'cidade' => ['max:80'], 
             'uf' => ['max:2'], 
             'cep' => ['max:8'], 
-            'obs' => ['required'], 
-            'datadocvenc' => ['required'], 
             'bloqueado' => ['max:1'], 
-            'obsbloq'=> ['required'], 
             'idvendedor'=> ['required'], 
             'novo' => ['max:1']
         ];

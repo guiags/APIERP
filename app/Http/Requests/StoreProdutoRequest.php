@@ -24,11 +24,11 @@ class StoreProdutoRequest extends FormRequest
         return [
             'codprod'=> ['required'], 
             'nome'=> ['required', 'max:80'], 
-            'descrcompleta'=> ['required', 'max:1000'], 
+            'descrcompleta'=> ['max:1000'], 
             'referencia'=> ['required', 'max:30'], 
             'codgrupo'=> ['required'], 
             'unidade'=> ['required', 'max:6'], 
-            'codbarras'=> ['required', 'max:14'], 
+            'codbarras'=> ['max:14'], 
             'preco'=> ['required'], 
             'fotoprod'=> ['required', 'max:200'], 
             'usagrade'=> ['required', 'max:1'], 

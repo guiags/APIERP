@@ -25,7 +25,7 @@ class StoreProdutoprecoRequest extends FormRequest
             'codprod'=> ['required'], 
             'codpreco'=> ['required'], 
             'preco'=> ['required'], 
-            'descricao'=> ['required', 'max:30']
+            'descricao'=> ['max:30']
         ];
     }
 }

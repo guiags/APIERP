@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Produto;
 use App\Models\Banco;
-use App\Models\ProdutoPreco;
-use App\Models\ProdutoLote;
+use App\Models\Produtopreco;
+use App\Models\Produtolote;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreProdutoRequest;
@@ -208,7 +208,7 @@ class ProdutoController extends Controller
             DB::table('produtos')->where('codprod', $id)->delete();
 
             $this->rolbackDatabaseConnection();
-            return response()->json(['message' => '204',
+            return response()->json(['codigo' => '204',
                 'message' => 'Produto excluida.',
                                 ], 204);
         }

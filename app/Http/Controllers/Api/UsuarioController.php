@@ -155,6 +155,45 @@ class UsuarioController extends Controller
                                 ], 404);
     }
 
+    public function destroyByIdVendedor($idvendedor, Request $request)
+    {
+        $aux = $this->changeDatabaseConnection($request);
+         if(!$aux){
+        return response('Token Inválido', 404);
+        }
+        $usuario = DB::table('usuarios')->where('idvendedor', $idvendedor)->first();
+        if (!$usuario) {
+            $this->rolbackDatabaseConnection();
+            return response('Id de Vendedor nao encontrados', 404);
+        } 
+        DB::table('usuarios')->where('idvendedor', $idvendedor)->delete();
+        $this->rolbackDatabaseConnection();
+        return response()->json(['codigo' => '204',
+                'message' => 'Usuario excluido.',
+                                ], 204);
+    }
+
+    public function updateByIdVendedor($idvendedor, Request $request)
+    {
+        $aux = $this->changeDatabaseConnection($request);
+         if(!$aux){
+        return response('Token Inválido', 404);
+        }
+        $usuario = DB::table('usuarios')->where('idvendedor', $idvendedor)->first();
+        if (!$usuario) {
+            return response()->json(['erro' => '404',
+            'message' => 'Id de Vendedor nao encontrados.',
+                                ], 404);
+        }
+        else{
+            DB::table('usuarios')
+            ->where('idvendedor', $idvendedor)
+            ->update($request->only(['usuario','senha','idvendedor', 'nomevendedor','perccomiss','percdescmax','comisregrpercdesc','comisregrperccomis']));   
+            $this->rolbackDatabaseConnection();
+            return new UsuarioResource($usuario);
+        }
+    }
+
 
     public function changeDatabaseConnection(Request $request)
     {

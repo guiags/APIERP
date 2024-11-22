@@ -3,6 +3,7 @@
 namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\Produtopreco;
+use App\Models\Produtolote;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -16,11 +17,11 @@ class Produto extends Model
 
     public function precos()
     {
-        return $this->hasMany(ProdutoPreco::class, 'codprod'); // Ajuste a chave estrangeira conforme sua tabela
+        return $this->hasMany(Produtopreco::class, 'codprod'); // Ajuste a chave estrangeira conforme sua tabela
     }
 
     public function lotes()
     {
-        return $this->hasMany(ProdutoLote::class, 'codprod'); // Ajuste a chave estrangeira conforme sua tabela
+        return $this->hasMany(Produtolote::class, 'codprod'); // Ajuste a chave estrangeira conforme sua tabela
     }
 }

@@ -116,7 +116,9 @@ class ClienteController extends Controller
         else{
             $cliente = DB::table('clientes')->where('codpessoa', $id)->first();
             if (!$cliente) {
-                return response('Cliente não encontrado', 404);
+                return response()->json(['erro' => '404',
+                'message' => 'Cliente nao encontrado.',
+                                    ], 404);
             } 
             DB::table('clientes')
             ->where('codpessoa', $id)
@@ -144,12 +146,15 @@ class ClienteController extends Controller
         else{
             $cliente = DB::table('clientes')->where('codpessoa', $id)->first();
             if (!$cliente) {
+                $this->rolbackDatabaseConnection();
                 return response('Cliente não encontrado', 404);
             } 
             DB::table('clientes')->where('codpessoa', $id)->delete();
             //$cliente->delete();
             $this->rolbackDatabaseConnection();
-            return response('Erro ao excluir', 204);
+            return response()->json(['codigo' => '204',
+                'message' => 'Cliente excluido.',
+                                ], 204);
         }
     }
 
@@ -173,6 +178,45 @@ class ClienteController extends Controller
         return response()->json(['erro' => '404',
             'message' => 'CPF ou CNPJ nao encontrados.',
                                 ], 404);
+    }
+
+    public function destroyByCpfCnpj($cpfcnpj, Request $request)
+    {
+        $aux = $this->changeDatabaseConnection($request);
+         if(!$aux){
+        return response('Token Inválido', 404);
+        }
+        $cliente = DB::table('clientes')->where('cpfcnpj', $cpfcnpj)->first();
+        if (!$cliente) {
+            $this->rolbackDatabaseConnection();
+            return response('Cliente não encontrado', 404);
+        } 
+        DB::table('clientes')->where('cpfcnpj', $cpfcnpj)->delete();
+        $this->rolbackDatabaseConnection();
+        return response()->json(['codigo' => '204',
+                'message' => 'Cliente excluido.',
+                                ], 204);
+    }
+
+    public function updateByCpfCnpj($cpfcnpj, Request $request)
+    {
+        $aux = $this->changeDatabaseConnection($request);
+         if(!$aux){
+        return response('Token Inválido', 404);
+        }
+        $cliente = DB::table('clientes')->where('cpfcnpj', $cpfcnpj)->first();
+        if (!$cliente) {
+            return response()->json(['erro' => '404',
+            'message' => 'Cliente nao encontrado.',
+                                ], 404);
+        }
+        else{
+            DB::table('clientes')
+            ->where('cpfcnpj', $cpfcnpj)
+            ->update($request->only(['nomepessoa', 'tipopessoa', 'cpfcnpj', 'inscestadual', 'email', 'telefone1', 'telefone2', 'celular1', 'celular2', 'logradouro', 'numero', 'complemento', 'bairro', 'cidade', 'uf', 'cep', 'obs', 'datadocvenc', 'bloqueado', 'obsbloq', 'idvendedor', 'novo']));   
+            $this->rolbackDatabaseConnection();
+            return new ClienteResource($cliente);
+        }
     }
 
 

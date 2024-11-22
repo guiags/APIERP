@@ -59,5 +59,9 @@ Route::apiResource('produtos', ProdutoController::class)->except([
 
 
 Route::get('clientes/cpfcnpj/{cpfcnpj}', [ClienteController::class, 'showByCpfCnpj']);
+Route::delete('clientes/cpfcnpj/{cpfcnpj}', [ClienteController::class, 'destroyByCpfCnpj']);
+Route::put('clientes/cpfcnpj/{cpfcnpj}', [ClienteController::class, 'updateByCpfCnpj']);
 
 Route::get('usuarios/idvendedor/{idvendedor}', [UsuarioController::class, 'showByIdVendedor']);
+Route::delete('usuarios/idvendedor/{idvendedor}', [UsuarioController::class, 'destroyByIdVendedor']);
+Route::put('usuarios/idvendedor/{idvendedor}', [UsuarioController::class, 'updateByIdVendedor']);
