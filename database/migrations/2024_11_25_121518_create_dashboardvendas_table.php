@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('dashboardvendas', function (Blueprint $table) {
+        /*Schema::create('dashboardvendas', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-        });
+        });*/
     }
 
     /**
@@ -22,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('dashboardvendas');
+        //Schema::dropIfExists('dashboardvendas');
     }
 };

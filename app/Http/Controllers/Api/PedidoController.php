@@ -62,14 +62,42 @@ class PedidoController extends Controller
                                 ], 404); 
         }
         else{
-            $pedidos = $request->input('itens');
+            /*$pedidos = $request->input('itens');
             foreach($pedidos as $pedido){
                 Pedidoitens::create($pedido);
             }
 
             $pedido = Pedido::create($request->except('itens'));
             $this->rolbackDatabaseConnection();
-            return response($request);//new ProdutoResource($produto);
+            return response($request);//new ProdutoResource($produto);*/
+            $pedidos = $request->input('data');
+            $auxiliar = 0;
+            $responsecodssuc=[];
+            $responsecodsermes=[];
+            foreach($pedidos as $pedido){
+                $auxiliar = $pedido['id'];
+                DB::beginTransaction();   
+                try{ 
+                    $itens = $pedido['itens'];
+                    foreach($itens as $item){
+                        Pedidoitens::create($item);
+                    }
+                    Pedido::create($pedido);
+                    DB::commit();
+                    array_push($responsecodssuc, $auxiliar);
+                } catch (\Exception $e) {
+                    DB::rollback();
+                    $auxiliar = ['Numped' => $auxiliar];
+                    array_push($responsecodsermes, [$auxiliar,$e]);
+                }   
+            }
+            $this->rolbackDatabaseConnection();
+            return response()->json([
+                                'erro' => $responsecodsermes,
+                                'sucesso' => $responsecodssuc], 200); 
+
+
+
         }
     }
 

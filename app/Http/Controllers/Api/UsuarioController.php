@@ -22,7 +22,9 @@ class UsuarioController extends Controller
     {
         $aux = $this->changeDatabaseConnection($request);
         if (!$aux){
-            return response('Token Inválido', 404);
+            return response()->json(['erro' => '404',
+            'message' => 'Token Invalido.',
+                            ], 404); 
         }
         else{
             $usuario = Usuario::all();
@@ -46,7 +48,9 @@ class UsuarioController extends Controller
     {
         $aux = $this->changeDatabaseConnection($request);
         if(!$aux){
-            return response('Token Inválido', 404);
+            return response()->json(['erro' => '404',
+            'message' => 'Token Invalido.',
+                            ], 404); 
         }
         else{
             $usuario = Usuario::create($request->all());
@@ -63,7 +67,9 @@ class UsuarioController extends Controller
         try {
             $aux = $this->changeDatabaseConnection($request);
             if(!$aux){
-                return response('Token Inválido', 404);    
+                return response()->json(['erro' => '404',
+                'message' => 'Token Invalido.',
+                                ], 404);     
             }
             else{
                 $usuario = Usuario::findOrFail($id);
@@ -99,12 +105,16 @@ class UsuarioController extends Controller
     {
         $aux = $this->changeDatabaseConnection($request);
         if(!$aux){
-            return response('Token Inválido', 404);
+            return response()->json(['erro' => '404',
+            'message' => 'Token Invalido.',
+                            ], 404); 
         }
         else{
             $usuario = DB::table('usuarios')->where('id', $id)->first();
             if (!$usuario) {
-                return response('Usuário não encontrado', 404);
+                return response()->json(['erro' => '404',
+                'message' => 'Usuario nao encontrados.',
+                                    ], 404);
             } 
             DB::table('usuarios')
             ->where('id', $id)
@@ -123,12 +133,16 @@ class UsuarioController extends Controller
     {
         $aux = $this->changeDatabaseConnection($request);
         if(!$aux){
-            return response('Token Inválido', 404);
+            return response()->json(['erro' => '404',
+            'message' => 'Token Invalido.',
+                            ], 404); 
         }
         else{
             $usuario = DB::table('usuarios')->where('id', $id)->first();
             if (!$usuario) {
-                return response('Usuário não encontrado', 404);
+                return response()->json(['erro' => '404',
+                'message' => 'Usuario nao encontrado.',
+                                    ], 404);
             } 
             DB::table('usuarios')->where('id', $id)->delete();
             $this->rolbackDatabaseConnection();
@@ -151,7 +165,7 @@ class UsuarioController extends Controller
         }
 
         return response()->json(['erro' => '404',
-            'message' => 'Id de Vendedor nao encontrados.',
+            'message' => 'Usuario nao encontrado.',
                                 ], 404);
     }
 
@@ -164,7 +178,9 @@ class UsuarioController extends Controller
         $usuario = DB::table('usuarios')->where('idvendedor', $idvendedor)->first();
         if (!$usuario) {
             $this->rolbackDatabaseConnection();
-            return response('Id de Vendedor nao encontrados', 404);
+            return response()->json(['erro' => '404',
+            'message' => 'Usuario nao encontrado.',
+                                ], 404);
         } 
         DB::table('usuarios')->where('idvendedor', $idvendedor)->delete();
         $this->rolbackDatabaseConnection();
@@ -182,7 +198,7 @@ class UsuarioController extends Controller
         $usuario = DB::table('usuarios')->where('idvendedor', $idvendedor)->first();
         if (!$usuario) {
             return response()->json(['erro' => '404',
-            'message' => 'Id de Vendedor nao encontrados.',
+            'message' => 'Usuario nao encontrado.',
                                 ], 404);
         }
         else{

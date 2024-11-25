@@ -23,7 +23,9 @@ class ClienteController extends Controller
     {
         $aux = $this->changeDatabaseConnection($request);
         if (!$aux){
-            return response('Token Inválido', 404);
+            return response()->json(['erro' => '404',
+            'message' => 'Token Invalido.',
+                            ], 404);
         }
         else{
             $clientes = Cliente::all();
@@ -47,12 +49,35 @@ class ClienteController extends Controller
     {   
         $aux = $this->changeDatabaseConnection($request);
         if(!$aux){
-            return response('Token Inválido', 404);
+            return response()->json(['erro' => '404',
+            'message' => 'Token Invalido.',
+                            ], 404);
         }
         else{
-            $cliente = Cliente::create($request->all());
+            /*$cliente = Cliente::create($request->all());
             $this->rolbackDatabaseConnection();
-            return new ClienteResource($cliente);
+            return new ClienteResource($cliente);*/
+            $clientes = $request->input('data');
+            $auxiliar = 0;
+            $responsecodssuc=[];
+            $responsecodsermes=[];
+            foreach($clientes as $cliente){
+                $auxiliar = $cliente['codpessoa'];
+                DB::beginTransaction();   
+                try{ 
+                    Cliente::create($cliente);
+                    DB::commit();
+                    array_push($responsecodssuc, $auxiliar);
+                } catch (\Exception $e) {
+                    DB::rollback();
+                    $auxiliar = ['Codpessoa' => $auxiliar];
+                    array_push($responsecodsermes, [$auxiliar,$e]);
+                }   
+            }
+            $this->rolbackDatabaseConnection();
+            return response()->json([
+                                'erro' => $responsecodsermes,
+                                'sucesso' => $responsecodssuc], 200); 
         }
     }
 
@@ -64,7 +89,9 @@ class ClienteController extends Controller
         try {
             $aux = $this->changeDatabaseConnection($request);
             if(!$aux){
-                return response('Token Inválido', 404);    
+                return response()->json(['erro' => '404',
+                'message' => 'Token Invalido.',
+                                ], 404);    
             }
             else{
                 $cliente = Cliente::findOrFail($id);
@@ -111,7 +138,9 @@ class ClienteController extends Controller
         }Adicionar Cliente $Cliente */
         $aux = $this->changeDatabaseConnection($request);
         if(!$aux){
-            return response('Token Inválido', 404);
+            return response()->json(['erro' => '404',
+            'message' => 'Token Invalido.',
+                            ], 404);;
         }
         else{
             $cliente = DB::table('clientes')->where('codpessoa', $id)->first();
@@ -141,13 +170,17 @@ class ClienteController extends Controller
         $aux = $this->changeDatabaseConnection($request);
         //return $aux;
         if(!$aux){
-            return response('Token Inválido', 404);
+            return response()->json(['erro' => '404',
+            'message' => 'Token Invalido.',
+                            ], 404);
         }
         else{
             $cliente = DB::table('clientes')->where('codpessoa', $id)->first();
             if (!$cliente) {
                 $this->rolbackDatabaseConnection();
-                return response('Cliente não encontrado', 404);
+                return response()->json(['erro' => '404',
+                'message' => 'Token Invalido.',
+                                ], 404);
             } 
             DB::table('clientes')->where('codpessoa', $id)->delete();
             //$cliente->delete();
@@ -164,7 +197,9 @@ class ClienteController extends Controller
         $aux = $this->changeDatabaseConnection($request);
         //return $aux;
          if(!$aux){
-        return response('Token Inválido', 404);
+        return response()->json(['erro' => '404',
+        'message' => 'Token Invalido.',
+                        ], 404);
         }
         $cliente = Cliente::where('cpfcnpj', $cpfcnpj)->first();
         $this->rolbackDatabaseConnection();
@@ -184,12 +219,16 @@ class ClienteController extends Controller
     {
         $aux = $this->changeDatabaseConnection($request);
          if(!$aux){
-        return response('Token Inválido', 404);
+        return response()->json(['erro' => '404',
+        'message' => 'Token Invalido.',
+                        ], 404);
         }
         $cliente = DB::table('clientes')->where('cpfcnpj', $cpfcnpj)->first();
         if (!$cliente) {
             $this->rolbackDatabaseConnection();
-            return response('Cliente não encontrado', 404);
+            return response()->json(['erro' => '404',
+            'message' => 'Cliente nao encontrado.',
+                                ], 404);
         } 
         DB::table('clientes')->where('cpfcnpj', $cpfcnpj)->delete();
         $this->rolbackDatabaseConnection();

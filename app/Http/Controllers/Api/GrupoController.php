@@ -22,7 +22,9 @@ class GrupoController extends Controller
     {
         $aux = $this->changeDatabaseConnection($request);
         if (!$aux){
-            return response('Token Inválido', 404);
+            return response()->json(['erro' => '404',
+                'message' => 'Token Invalido.',
+                            ], 404); 
         }
         else{
             $grupo = Grupo::all();
@@ -46,7 +48,9 @@ class GrupoController extends Controller
     {
         $aux = $this->changeDatabaseConnection($request);
         if(!$aux){
-            return response('Token Inválido', 404);
+            return response()->json(['erro' => '404',
+                'message' => 'Token Invalido.',
+                            ], 404); 
         }
         else{
             $grupo = Grupo::create($request->all());
@@ -63,12 +67,16 @@ class GrupoController extends Controller
         try {
             $aux = $this->changeDatabaseConnection($request);
             if(!$aux){
-                return response('Token Inválido', 404);    
+                return response()->json(['erro' => '404',
+                'message' => 'Token Invalido.',
+                                ], 404);   
             }
             else{
-                $grupo = Grupo::findOrFail($id);
+                $grupo = Grupo::find($id);
                 if(!$grupo){
-                    response('Grupo não encontrado!', 404);
+                    response()->json(['erro' => '404',
+                    'message' => 'Grupo nao encontrado.',
+                                    ], 404);
                 }
                 else{
                     $this->rolbackDatabaseConnection();
@@ -78,9 +86,9 @@ class GrupoController extends Controller
 
         } catch (ModelNotFoundException $e) {
             $this->rolbackDatabaseConnection();
-            return response()->json([
-                'message' => 'Grupo não encontrado.'
-            ], 404);
+            return response()->json(['erro' => '404',
+            'message' => 'Grupo nao encontrado.',
+                                ], 404);
         }
     }
 
@@ -99,12 +107,16 @@ class GrupoController extends Controller
     {
         $aux = $this->changeDatabaseConnection($request);
         if(!$aux){
-            return response('Token Inválido', 404);
+            return response()->json(['erro' => '404',
+            'message' => 'Token Invalido.',
+                            ], 404); 
         }
         else{
             $grupo = DB::table('grupo')->where('codgrupo', $id)->first();
             if (!$grupo) {
-                return response('Grupo não encontrado', 404);
+                return response()->json(['erro' => '404',
+                'message' => 'Grupo nao encontrado.',
+                                    ], 404);
             } 
             DB::table('grupo')
             ->where('codgrupo', $id)
@@ -122,12 +134,16 @@ class GrupoController extends Controller
     {
         $aux = $this->changeDatabaseConnection($request);
         if(!$aux){
-            return response('Token Inválido', 404);
+            return response()->json(['erro' => '404',
+            'message' => 'Token Invalido.',
+                            ], 404); 
         }
         else{
             $grupo = DB::table('grupo')->where('codgrupo', $id)->first();
             if (!$grupo) {
-                return response('Grupo não encontrado', 404);
+                return response()->json(['erro' => '404',
+                'message' => 'Grupo nao encontrado.',
+                                    ], 404);
             } 
             DB::table('grupo')->where('codgrupo', $id)->delete();
             $this->rolbackDatabaseConnection();

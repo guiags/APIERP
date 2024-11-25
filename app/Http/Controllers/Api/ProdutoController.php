@@ -69,21 +69,35 @@ class ProdutoController extends Controller
                                 ], 404); 
         }
         else{
-            //$produtopreco = $request->get('precos')->all();
-            $precos = $request->input('precos');
-            foreach($precos as $preco){
-                //return $preco;
-                Produtopreco::create($preco);
+            $produtos = $request->input('data');
+            $auxiliar = 0;
+            $responsecodssuc=[];
+            $responsecodsermes=[];
+            foreach($produtos as $produto){
+                $auxiliar = $produto['codprod'];
+                DB::beginTransaction();   
+                try{ 
+                    $precos = $produto['precos'];
+                    foreach($precos as $preco){
+                        Produtopreco::create($preco);
+                    }
+                    $lotes = $produto['lotes'];
+                    foreach($lotes as $lote){
+                        Produtolote::create($lote);
+                    }
+                    $prod = Produto::create($produto);
+                    DB::commit();
+                    array_push($responsecodssuc, $auxiliar);
+                } catch (\Exception $e) {
+                    DB::rollback();
+                    $auxiliar = ['Codprod' => $auxiliar];
+                    array_push($responsecodsermes, [$auxiliar,$e]);
+                }   
             }
-
-            $lotes = $request->input('lotes');
-            foreach($lotes as $lote){
-                Produtolote::create($lote);
-            }
-
-            $produto = Produto::create($request->except('precos', 'lotes'));
             $this->rolbackDatabaseConnection();
-            return response($request);//new ProdutoResource($produto);
+            return response()->json([
+                                'erro' => $responsecodsermes,
+                                'sucesso' => $responsecodssuc], 200); 
         }
     }
 
