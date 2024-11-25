@@ -13,6 +13,8 @@ use App\Http\Controllers\Api\ConfigvendedorController;
 use App\Http\Controllers\Api\ProdutoController;
 use App\Http\Controllers\Api\PedidoController;
 use App\Http\Controllers\Api\HistpedidoController;
+use App\Http\Controllers\Api\CtreceberController;
+use App\Http\Controllers\Api\DashboardvendasController;
 
 /*Route::get('/user', function (Request $request) {
     return $request->user();
@@ -64,6 +66,12 @@ Route::apiResource('pedido', PedidoController::class)->except([
 ]);
 Route::apiResource('hist_pedido', HistpedidoController::class)->except([
     'create', 'edit'
+]);
+Route::apiResource('ctreceber', CtreceberController::class)->except([
+    'create', 'edit'
+]);
+Route::apiResource('dashboard_vendas', DashboardvendasController::class)->except([
+    'create', 'edit', 'destroy', 'update', 'index'
 ]);
 
 
