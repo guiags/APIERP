@@ -213,6 +213,7 @@ class UsuarioController extends Controller
 
     public function changeDatabaseConnection(Request $request)
     {
+        $this->rolbackDatabaseConnection();
         $TokenRenovar = $request->header('TokenRenovar');
         $NomeBanco = Banco::where('TokenRenovar', $TokenRenovar)->Pluck('NomeBanco');
         //$UserBanco = Banco::where('TokenRenovar', $TokenRenovar)->Pluck('usuario');

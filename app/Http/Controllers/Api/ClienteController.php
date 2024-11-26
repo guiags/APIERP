@@ -62,15 +62,23 @@ class ClienteController extends Controller
             $responsecodssuc=[];
             $responsecodsermes=[];
             foreach($clientes as $cliente){
-                $auxiliar = $cliente['codpessoa'];
+                $auxiliar = $cliente['cpfcnpj'];
                 DB::beginTransaction();   
                 try{ 
-                    Cliente::create($cliente);
-                    DB::commit();
-                    array_push($responsecodssuc, $auxiliar);
+                    $vercpf = DB::table('clientes')->where('cpfcnpj', $auxiliar)->first();
+                    if(!$vercpf){
+                        Cliente::create($cliente);
+                        DB::commit();
+                        array_push($responsecodssuc, $auxiliar);
+                    }
+                    else{
+                        $auxiliar = ['cpfcnpj' => $auxiliar,
+                                        'erro' => 'O cpf/cpnj já consta na base.'];
+                        array_push($responsecodsermes, $auxiliar);    
+                    }                    
                 } catch (\Exception $e) {
                     DB::rollback();
-                    $auxiliar = ['Codpessoa' => $auxiliar];
+                    $auxiliar = ['cpfcnpj' => $auxiliar];
                     array_push($responsecodsermes, [$auxiliar,$e]);
                 }   
             }
@@ -261,6 +269,7 @@ class ClienteController extends Controller
 
     public function changeDatabaseConnection(Request $request)
     {
+        $this->rolbackDatabaseConnection();
         $TokenRenovar = $request->header('TokenRenovar');
         $NomeBanco = Banco::where('TokenRenovar', $TokenRenovar)->Pluck('NomeBanco');
         //$UserBanco = Banco::where('TokenRenovar', $TokenRenovar)->Pluck('usuario');

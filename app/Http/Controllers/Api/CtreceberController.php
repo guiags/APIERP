@@ -159,6 +159,7 @@ class CtreceberController extends Controller
 
     public function changeDatabaseConnection(Request $request)
     {
+        $this->rolbackDatabaseConnection();
         $TokenRenovar = $request->header('TokenRenovar');
         $NomeBanco = Banco::where('TokenRenovar', $TokenRenovar)->Pluck('NomeBanco');
 
