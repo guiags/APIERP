@@ -78,14 +78,24 @@ class ClienteController extends Controller
                     }                    
                 } catch (\Exception $e) {
                     DB::rollback();
-                    $auxiliar = ['cpfcnpj' => $auxiliar];
-                    array_push($responsecodsermes, [$auxiliar,$e]);
+                    if($e->errorInfo[1] == 1062){
+                        $auxiliar = ['cpfcnpj' => $auxiliar,
+                                'message'=> 'O Cliente já consta na base de dados.'];    
+                    }else{
+                        $auxiliar = ['cpfcnpj' => $auxiliar,
+                                'message'=> $e->errorInfo[2]];
+                    }
+                    array_push($responsecodsermes, $auxiliar);
                 }   
             }
             $this->rolbackDatabaseConnection();
+            if (empty($responsecodsermes)){
+                return response()->json([
+                    'sucesso' => $responsecodssuc], 200);        
+            }
             return response()->json([
-                                'erro' => $responsecodsermes,
-                                'sucesso' => $responsecodssuc], 200); 
+                'erro' => $responsecodsermes,
+                    'sucesso' => $responsecodssuc], 200);  
         }
     }
 

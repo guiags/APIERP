@@ -90,14 +90,24 @@ class ProdutoController extends Controller
                     array_push($responsecodssuc, $auxiliar);
                 } catch (\Exception $e) {
                     DB::rollback();
-                    $auxiliar = ['Codprod' => $auxiliar];
-                    array_push($responsecodsermes, [$auxiliar,$e]);
-                }   
-            }
+                    if($e->errorInfo[1] == 1062){
+                        $auxiliar = ['codprod' => $auxiliar,
+                                'erro'=> 'O Produto já consta na base de dados.'];    
+                    }else{
+                        $auxiliar = ['codprod' => $auxiliar,
+                                'message'=> $e->errorInfo[2]];
+                    }
+                    array_push($responsecodsermes, $auxiliar);
+                }
+            }   
             $this->rolbackDatabaseConnection();
+            if (empty($responsecodsermes)){
+                return response()->json([
+                    'sucesso' => $responsecodssuc], 200);        
+            }
             return response()->json([
-                                'erro' => $responsecodsermes,
-                                'sucesso' => $responsecodssuc], 200); 
+                'erro' => $responsecodsermes,
+                    'sucesso' => $responsecodssuc], 200); 
         }
     }
 
@@ -130,7 +140,7 @@ class ProdutoController extends Controller
         } catch (ModelNotFoundException $e) {
             $this->rolbackDatabaseConnection();
             return response()->json(['erro' => '404',
-            'message' => 'Produto nao encontrada.',
+            'message' => 'Produto nao encontrado.',
             ], 404);
         }
     }

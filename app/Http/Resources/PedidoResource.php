@@ -19,7 +19,10 @@ class PedidoResource extends JsonResource
             'emissao'=> $this->emissao, 
             'tipo'=> $this->tipo, 
             'status'=> $this->status, 
-            'idcliente'=> $this->idcliente, 
+            'idcliente'=> $this->idcliente,
+            'nomepessoa'=> optional($this->cliente)->nomepessoa,
+            'cpfcnpj'=> optional($this->cliente)->cpfcnpj,
+            'clientenovo'=> optional($this->cliente)->novo,
             'entrega'=> $this->entrega, 
             'percdesc'=> $this->percdesc, 
             'vrdesc'=> $this->vrdesc, 
@@ -35,7 +38,10 @@ class PedidoResource extends JsonResource
             'idvendedor'=> $this->idvendedor, 
             'vrcomis'=> $this->vrcomis, 
             'perccomis'=> $this->perccomis,
-            'itens' => $this->itens
+            'itens' =>// $this->itens
+            PedidoitemResource::collection($this->whenLoaded('itens'))
+
+            //'nomeproduto' => $this->itens->nome
         ];
     }
 }

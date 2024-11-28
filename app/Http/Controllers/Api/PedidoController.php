@@ -22,6 +22,7 @@ class PedidoController extends Controller
      */
     public function index(Request $request)
     {
+        $this->rolbackDatabaseConnection();
         $aux = $this->changeDatabaseConnection($request);
         if (!$aux){
             return response()->json(['erro' => '404',
@@ -29,7 +30,26 @@ class PedidoController extends Controller
                             ], 404);
         }
         else{
-            $pedidos = Pedido::with('itens')->get();
+            $idvendedor = $request->query('idvendedor');
+            $intervalo = $request->query('intervalo');
+            $tipo = $request->query('tipo');
+            $pedidos = Pedido::with('itens', 'cliente', 'itens.produto');
+
+            if(!empty($intervalo)){
+                list($dataInicio, $dataFim) = explode('_', $intervalo);
+                $dataInicio = \Carbon\Carbon::createFromFormat('Y-m-d', $dataInicio);
+                $dataFim = \Carbon\Carbon::createFromFormat('Y-m-d', $dataFim);
+                //return response()->json([$dataInicio->toDateString(), $dataFim->toDateString()]);
+                $pedidos->whereBetween('emissao', [$dataInicio->toDateString(), $dataFim->toDateString()]);    
+            }
+            if(!empty($idvendedor)){
+                $pedidos->where('idvendedor', $idvendedor);
+            }
+            if(!empty($tipo)){
+                $pedidos->where('tipo', $tipo);
+            }
+            $pedidos = $pedidos->get();
+            
             $this->rolbackDatabaseConnection();
             
             $pedidos->each(function ($pedido) {
@@ -114,7 +134,7 @@ class PedidoController extends Controller
                                 ], 404);   
             }
             else{
-                $pedido = Pedido::with('itens')->find($id);
+                $pedido = Pedido::with('itens', 'cliente')->find($id);
                 if(!$pedido){
                     $this->rolbackDatabaseConnection();
                     return response()->json(['erro' => '404',

@@ -24,4 +24,8 @@ class Produto extends Model
     {
         return $this->hasMany(Produtolote::class, 'codprod'); // Ajuste a chave estrangeira conforme sua tabela
     }
+    public function pedidoitens()
+    {
+        return $this->belongsTo(Pedidoitens::class, 'idproduto');
+    }
 }

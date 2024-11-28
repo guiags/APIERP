@@ -3,6 +3,7 @@
 namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\Pedidoitens;
+use App\Models\Cliente;
 
 
 use Illuminate\Database\Eloquent\Model;
@@ -19,4 +20,10 @@ class Pedido extends Model
     {
         return $this->hasMany(Pedidoitens::class, 'idpedido'); // Ajuste a chave estrangeira conforme sua tabela
     }
+
+    public function cliente()
+    {
+        return $this->hasOne(Cliente::class, 'codpessoa'); // Ajuste a chave estrangeira conforme sua tabela
+    }
+
 }
