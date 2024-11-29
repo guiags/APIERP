@@ -53,9 +53,20 @@ class GrupoController extends Controller
                             ], 404); 
         }
         else{
-            $grupo = Grupo::create($request->all());
-            $this->rolbackDatabaseConnection();
-            return new GrupoResource($grupo);
+            try{
+                $grupo = Grupo::create($request->all());
+                $this->rolbackDatabaseConnection();
+                return new GrupoResource($grupo);
+            } catch (\Exception $e) {
+                if($e->errorInfo[1] == 1062){
+                    return response()->json(['codgrupo' => $request->codgrupo,
+                            'erro'=> 'O Grupo já consta na base de dados.']);    
+                }else{
+                    return response()->json(['id' => $request->id,
+                            'message'=> $e->errorInfo[2]]);
+                }
+            }
+            
         }
     }
 

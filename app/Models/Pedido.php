@@ -23,7 +23,7 @@ class Pedido extends Model
 
     public function cliente()
     {
-        return $this->hasOne(Cliente::class, 'codpessoa'); // Ajuste a chave estrangeira conforme sua tabela
+        return $this->hasOne(Cliente::class, 'codpessoa','idcliente'); // Ajuste a chave estrangeira conforme sua tabela
     }
 
 }

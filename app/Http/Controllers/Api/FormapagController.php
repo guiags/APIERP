@@ -53,9 +53,19 @@ class FormapagController extends Controller
                                 ], 404); 
         }
         else{
-            $formapag = Formapag::create($request->all());
-            $this->rolbackDatabaseConnection();
-            return new FormapagResource($formapag);
+            try{
+                $formapag = Formapag::create($request->all());
+                $this->rolbackDatabaseConnection();
+                return new FormapagResource($formapag);
+            } catch (\Exception $e) {
+                if($e->errorInfo[1] == 1062){
+                    return response()->json(['id' => $request->id,
+                            'erro'=> 'A Forma de pagamento já consta na base de dados.']);    
+                }else{
+                    return response()->json(['id' => $request->id,
+                            'message'=> $e->errorInfo[2]]);
+                }
+            }
         }
     }
 

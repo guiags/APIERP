@@ -24,7 +24,7 @@ class PedidoitemResource extends JsonResource
             'vrunit'=> $this->vrunit,
             'vrtotal'=> $this->vrtotal,
             'codbarras'=> $this->codbarras,
-            'percdesc'=> $this->percdes,
+            'percdesc'=> $this->percdesc,
             'vrdesc'=> $this->vrdesc,
             'percacres'=> $this->percacres,
             'vracres'=> $this->vracres,

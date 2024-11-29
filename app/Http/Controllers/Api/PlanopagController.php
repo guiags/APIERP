@@ -54,9 +54,19 @@ class PlanopagController extends Controller
                                 ], 404); 
         }
         else{
-            $planopag = Planopag::create($request->all());
-            $this->rolbackDatabaseConnection();
-            return new PlanopagResource($planopag);
+            try{
+                $planopag = Planopag::create($request->all());
+                $this->rolbackDatabaseConnection();
+                return new PlanopagResource($planopag);
+            } catch (\Exception $e) {
+                if($e->errorInfo[1] == 1062){
+                    return response()->json(['id' => $request->id,
+                            'erro'=> 'O Plano de pagamento já consta na base de dados.']);    
+                }else{
+                    return response()->json(['id' => $request->id,
+                            'message'=> $e->errorInfo[2]]);
+                }
+            }
         }
     }
 

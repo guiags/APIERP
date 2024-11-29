@@ -10,7 +10,7 @@ class Pedidoitens extends Model
 {
     use HasFactory;
     public $timestamps = false;
-    protected $primaryKey = 'idproduto';
+    protected $primaryKey = 'idpedido';
     public $table = 'pedido_itens';
     protected $fillable = ['idpedido', 'numitem', 'idproduto', 'codpreco', 'quantidade', 'vrunit', 'vrtotal', 'codbarras', 'percdesc', 'vrdesc', 'percacres', 'vracres', 'perccomis', 'vrcomis', 'unidade', 'percdescunit', 'vrdescunit', 'vrunitoriginal', 'percacresunit', 'vracresunit'];
 
@@ -21,6 +21,6 @@ class Pedidoitens extends Model
 
     public function produto()
     {
-        return $this->hasOne(Produto::class, 'codprod'); // Ajuste a chave estrangeira conforme sua tabela
+        return $this->hasOne(Produto::class, 'codprod', 'idproduto'); // Class, chave da tabela estrangeira, chave estrangeira
     }
 }

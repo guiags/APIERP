@@ -134,7 +134,7 @@ class PedidoController extends Controller
                                 ], 404);   
             }
             else{
-                $pedido = Pedido::with('itens', 'cliente')->find($id);
+                $pedido = Pedido::with('itens', 'cliente', 'itens.produto')->find($id);
                 if(!$pedido){
                     $this->rolbackDatabaseConnection();
                     return response()->json(['erro' => '404',

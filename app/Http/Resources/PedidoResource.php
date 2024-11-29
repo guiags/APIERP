@@ -23,7 +23,7 @@ class PedidoResource extends JsonResource
             'nomepessoa'=> optional($this->cliente)->nomepessoa,
             'cpfcnpj'=> optional($this->cliente)->cpfcnpj,
             'clientenovo'=> optional($this->cliente)->novo,
-            'entrega'=> $this->entrega, 
+            //'nomepessoa'=> $this->cliente,
             'percdesc'=> $this->percdesc, 
             'vrdesc'=> $this->vrdesc, 
             'vrbruto'=> $this->vrbruto, 
