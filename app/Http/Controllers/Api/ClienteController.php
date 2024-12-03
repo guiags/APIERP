@@ -62,6 +62,7 @@ class ClienteController extends Controller
             $responsecodssuc=[];
             $responsecodsermes=[];
             foreach($clientes as $cliente){
+                $vaidationerrors=[];
                 $auxiliar = $cliente['cpfcnpj'];
                 DB::beginTransaction();   
                 try{ 
@@ -82,8 +83,51 @@ class ClienteController extends Controller
                         $auxiliar = ['cpfcnpj' => $auxiliar,
                                 'message'=> 'O Cliente já consta na base de dados.'];    
                     }else{
-                        $auxiliar = ['cpfcnpj' => $auxiliar,
+                        if($cliente['cpfcnpj'] == null){
+                            array_push($vaidationerrors, 'cpfcnpj');
+                        }
+                        if($cliente['celular1'] == null){
+                            array_push($vaidationerrors, 'celular1');;
+                        }
+                        if($cliente['logradouro'] == null){
+                            array_push($vaidationerrors, 'logradouro');;
+                        }
+                        if($cliente['bairro'] == null){
+                            array_push($vaidationerrors, 'bairro');;
+                        }
+                        if($cliente['cidade'] == null){
+                            array_push($vaidationerrors, 'cidade');;
+                        }
+                        if($cliente['uf'] == null){
+                            array_push($vaidationerrors, 'uf');;
+                        }
+                        if($cliente['idvendedor'] == null){
+                            array_push($vaidationerrors, 'idvendedor');;
+                        }
+                        if(empty($vaidationerrors)){
+                            //return $e->errorInfo[2];
+                            $auxiliar = ['cpfcnpj' => $auxiliar,
                                 'message'=> $e->errorInfo[2]];
+                        }
+                        else{
+                            $auxiliarnulos ='';
+                            foreach($vaidationerrors as $ercamp){
+                                $auxiliarnulos = $auxiliarnulos . $ercamp;
+                                if($ercamp == $vaidationerrors[array_key_last($vaidationerrors)]){
+                                    $auxiliarnulos = $auxiliarnulos .'.';  
+                                }else{
+                                    $auxiliarnulos = $auxiliarnulos .', ';  
+                                }
+                            }
+
+                            if($auxiliar==null){
+                                $auxiliar = ['nome' => $cliente['nomepessoa'],
+                                'message'=> "Os seguintes campos não estão preenchidos: ". $auxiliarnulos];
+                            }else{
+                                $auxiliar = ['cpfcnpj' => $auxiliar,
+                                'message'=> "Os seguintes campos não estão preenchidos: ". $auxiliarnulos];
+                            }
+                        }
                     }
                     array_push($responsecodsermes, $auxiliar);
                 }   

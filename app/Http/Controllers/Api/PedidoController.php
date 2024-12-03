@@ -95,20 +95,105 @@ class PedidoController extends Controller
             $responsecodssuc=[];
             $responsecodsermes=[];
             foreach($pedidos as $pedido){
+                $vaidationiterrors=[];
+                $vaidationerrors=[];
                 $auxiliar = $pedido['id'];
-                DB::beginTransaction();   
+                DB::beginTransaction();
+                if($pedido['emissao'] == null){
+                    array_push($vaidationerrors, 'emissao');
+                }
+                if($pedido['status'] == null){
+                    array_push($vaidationerrors, 'status');
+                }
+                if($pedido['tipo'] == null){
+                    array_push($vaidationerrors, 'tipo');
+                }
+                if($pedido['idcliente'] == null){
+                    array_push($vaidationerrors, 'idcliente');
+                }
+                if($pedido['vrbruto'] == null){
+                    array_push($vaidationerrors, 'vrbruto');
+                }
+                if($pedido['vrliquido'] == null){
+                    array_push($vaidationerrors, 'vrliquido');
+                }
+                if($pedido['idvendedor'] == null){
+                    array_push($vaidationerrors, 'idvendedor');;
+                }
+                if(empty($vaidationerrors)) {
+                    
+                }  
                 try{ 
                     $itens = $pedido['itens'];
-                    foreach($itens as $item){
-                        Pedidoitens::create($item);
+                    if(empty($vaidationerrors)) {
+                        foreach($itens as $item){
+
+                            if($item['idpedido'] == null){
+                                array_push($vaidationiterrors, 'idpedido');
+                            }
+                            if($item['numitem'] == null){
+                                array_push($vaidationiterrors, 'numitem');
+                            }
+                            if($item['idproduto'] == null){
+                                array_push($vaidationiterrors, 'idproduto');
+                            }
+                            if($item['codpreco'] == null){
+                                array_push($vaidationiterrors, 'codpreco');
+                            }
+                            if($item['quantidade'] == null){
+                                array_push($vaidationiterrors, 'quantidade');
+                            }
+                            if($item['vrunit'] == null){
+                                array_push($vaidationiterrors, 'vrunit');
+                            }
+                            if($item['vrtotal'] == null){
+                                array_push($vaidationiterrors, 'vrtotal');
+                            }
+                            if($item['unidade'] == null){
+                                array_push($vaidationiterrors, 'unidade');
+                            }
+
+                            Pedidoitens::create($item);
+                        }
                     }
                     Pedido::create($pedido);
                     DB::commit();
                     array_push($responsecodssuc, $auxiliar);
                 } catch (\Exception $e) {
                     DB::rollback();
-                    $auxiliar = ['Numped' => $auxiliar];
-                    array_push($responsecodsermes, [$auxiliar,$e]);
+                    
+
+                    if(empty($vaidationerrors) && empty($vaidationtierrors)){
+                        $auxiliar = ['Numped' => $auxiliar,
+                            'message'=> $e->errorInfo[2]];
+                    }else{
+                        $auxiliarnulos ='';
+                        $auxiliaritnulos ='';
+                        foreach($vaidationerrors as $ercamp){
+                            $auxiliarnulos = $auxiliarnulos . $ercamp;
+                            if($ercamp == $vaidationerrors[array_key_last($vaidationerrors)]){
+                                $auxiliarnulos = $auxiliarnulos .'.';  
+                            }else{
+                                $auxiliarnulos = $auxiliarnulos .', ';  
+                            }
+                        }
+                        foreach($vaidationiterrors as $ercamp){
+                            $auxiliaritnulos = $auxiliaritnulos . $ercamp;
+                            if($ercamp == $vaidationiterrors[array_key_last($vaidationiterrors)]){
+                                $auxiliaritnulos = $auxiliaritnulos .'.';  
+                            }else{
+                                $auxiliaritnulos = $auxiliaritnulos .', ';  
+                            }
+                        }
+                        $auxiliar = ['pedido' => $auxiliar,
+                            'message'=> "Os seguintes campos do pedido não estão preenchidos: ". $auxiliarnulos];
+                        if($auxiliaritnulos!=''){
+                            //array_push($auxiliar, 'Os seguintes campos dos itens não estão preenchidos: ' . $auxiliaritnulos); 
+                            $auxiliar['message'] = $auxiliar['message'] . 'Os seguintes campos dos itens não estão preenchidos: ' . $auxiliaritnulos;
+                        } 
+                    }
+
+                    array_push($responsecodsermes, $auxiliar);
                 }   
             }
             $this->rolbackDatabaseConnection();
@@ -234,6 +319,56 @@ class PedidoController extends Controller
                                 ], 204);
         }
     }
+
+    public function destroyByIdVendedor($idvendedor, Request $request)
+    {
+        $aux = $this->changeDatabaseConnection($request);
+         if(!$aux){
+        return response()->json(['erro' => '404',
+        'message' => 'Token Invalido.',
+                        ], 404);
+        }
+        $pedido= DB::table('pedido')->where('idvendedor', $idvendedor)->first();
+        if (!$pedido) {
+            $this->rolbackDatabaseConnection();
+            return response()->json(['erro' => '404',
+            'message' => 'Pedido nao encontrado.',
+                                ], 404);
+        }
+        $tipo = $request->query('tipo');
+        //if(empty($tipo)){
+            DB::table('pedido')->where('idvendedor', $idvendedor)->delete();
+            DB::table('pedido_itens')->where('idvendedor', $idvendedor)->delete();
+        /*}else{
+            DB::table('pedido')->where('idvendedor', $idvendedor)->where('tipo', $tipo)->delete();
+            DB::table('pedido_itens')->where('idvendedor', $idvendedor)->delete();
+        } */
+        $this->rolbackDatabaseConnection();
+        return response()->json(['codigo' => '204',
+                'message' => 'Pedido excluido.',
+                                ], 204);
+    }
+
+    public function showUltimoPedido(Request $request)
+    {
+        $aux = $this->changeDatabaseConnection($request);
+        if(!$aux){
+        return response()->json(['erro' => '404',
+        'message' => 'Token Invalido.',
+                        ], 404);
+        }
+        $pedido= Pedido::max('id');
+        if (!$pedido) {
+            $this->rolbackDatabaseConnection();
+            return response()->json(['erro' => '404',
+            'message' => 'Pedido nao encontrado.',
+                                ], 404);
+        }
+        $this->rolbackDatabaseConnection();
+        return response()->json(['numped' => $pedido,
+                                ], 200);
+    }
+
 
     public function changeDatabaseConnection(Request $request)
     {

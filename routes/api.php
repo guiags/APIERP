@@ -82,3 +82,9 @@ Route::put('clientes/cpfcnpj/{cpfcnpj}', [ClienteController::class, 'updateByCpf
 Route::get('usuarios/idvendedor/{idvendedor}', [UsuarioController::class, 'showByIdVendedor']);
 Route::delete('usuarios/idvendedor/{idvendedor}', [UsuarioController::class, 'destroyByIdVendedor']);
 Route::put('usuarios/idvendedor/{idvendedor}', [UsuarioController::class, 'updateByIdVendedor']);
+
+
+Route::delete('pedido/idvendedor/{idvendedor}', [PedidoController::class, 'destroyByIdVendedor']);
+Route::get('ultimo/pedido/', [PedidoController::class, 'showUltimoPedido']);
+
+Route::get('produtos/lotes/{codprod}', [ProdutoController::class, 'showProdutosByCodprod']);

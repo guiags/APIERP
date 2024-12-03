@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\StoreProdutoRequest;
 use App\Http\Requests\StoreProdutoprecoRequest;
 use App\Http\Resources\ProdutoResource;
+use App\Http\Resources\ProdutoloteResource;
 use Illuminate\Foundation\Http\FormRequest;
 
 use Illuminate\Support\Facades\Config;
@@ -236,6 +237,26 @@ class ProdutoController extends Controller
                 'message' => 'Produto excluida.',
                                 ], 204);
         }
+    }
+
+
+    public function showProdutosByCodprod(Request $request, $codprod)
+    {
+        $aux = $this->changeDatabaseConnection($request);
+        if(!$aux){
+        return response()->json(['erro' => '404',
+        'message' => 'Token Invalido.',
+                        ], 404);
+        }
+        $lotes= Produtolote::where('codprod', $codprod)->get();
+        if (!$lotes) {
+            $this->rolbackDatabaseConnection();
+            return response()->json(['erro' => '404',
+            'message' => 'Pedido nao encontrado.',
+                                ], 404);
+        }
+        $this->rolbackDatabaseConnection();
+        return ProdutoloteResource::collection($lotes);
     }
 
     public function changeDatabaseConnection(Request $request)
