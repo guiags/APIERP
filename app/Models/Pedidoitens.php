@@ -16,7 +16,7 @@ class Pedidoitens extends Model
 
     public function pedido()
     {
-        return $this->belongsTo(Pedido::class, 'id');
+        return $this->belongsTo(Pedido::class, 'id', 'idpedido');
     }
 
     public function produto()

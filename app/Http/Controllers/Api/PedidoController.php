@@ -33,7 +33,7 @@ class PedidoController extends Controller
             $idvendedor = $request->query('idvendedor');
             $intervalo = $request->query('intervalo');
             $tipo = $request->query('tipo');
-            $pedidos = Pedido::with('itens', 'cliente', 'itens.produto');
+            $pedidos = Pedido::with('itens', 'cliente', 'itens.produto', 'itens.produto.lotes');
 
             if(!empty($intervalo)){
                 list($dataInicio, $dataFim) = explode('_', $intervalo);
@@ -336,13 +336,23 @@ class PedidoController extends Controller
                                 ], 404);
         }
         $tipo = $request->query('tipo');
-        //if(empty($tipo)){
+        if(empty($tipo)){
             DB::table('pedido')->where('idvendedor', $idvendedor)->delete();
             DB::table('pedido_itens')->where('idvendedor', $idvendedor)->delete();
-        /*}else{
+        }else{
+            DB::table('pedido_itens')
+                ->join('pedido', 'pedido_itens.idpedido', '=', 'pedido.id')  // Assumindo que 'idpedido' seja a chave de relacionamento
+                ->where('pedido.tipo', $tipo)
+                ->where('pedido.idvendedor', $idvendedor)
+                ->delete();
             DB::table('pedido')->where('idvendedor', $idvendedor)->where('tipo', $tipo)->delete();
-            DB::table('pedido_itens')->where('idvendedor', $idvendedor)->delete();
-        } */
+            //DB::table('pedido_itens')->where('idvendedor', $idvendedor)->delete();
+            /*Pedidoitens::whereHas('pedido', function ($query) use ($tipo, $idvendedor){
+                $query->where('tipo', $tipo)
+                    ->where('pedido_itens.idpedido', '=', 'pedido.id')
+                    ->where('idvendedor', $idvendedor);
+            })->delete();*/
+        }
         $this->rolbackDatabaseConnection();
         return response()->json(['codigo' => '204',
                 'message' => 'Pedido excluido.',

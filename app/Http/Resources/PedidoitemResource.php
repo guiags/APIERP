@@ -19,6 +19,7 @@ class PedidoitemResource extends JsonResource
             'numitem'=> $this->numitem,
             'idproduto'=> $this->idproduto,
             'nomeproduto' => optional($this->produto)->nome,//new ProdutoResource($this->whenLoaded('produto')),
+            //'lotes' => optional($this->produto)->lotes,
             'codpreco'=> $this->codpreco,
             'quantidade'=> $this->quantidade,
             'vrunit'=> $this->vrunit,

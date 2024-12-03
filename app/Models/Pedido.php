@@ -18,7 +18,7 @@ class Pedido extends Model
 
     public function itens()
     {
-        return $this->hasMany(Pedidoitens::class, 'idpedido'); // Ajuste a chave estrangeira conforme sua tabela
+        return $this->hasMany(Pedidoitens::class, 'idpedido', 'id'); // Ajuste a chave estrangeira conforme sua tabela
     }
 
     public function cliente()
