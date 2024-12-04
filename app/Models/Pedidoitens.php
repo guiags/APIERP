@@ -3,6 +3,7 @@
 namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\Pedido;
+use App\Models\Pedidoitensgrades;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -22,5 +23,9 @@ class Pedidoitens extends Model
     public function produto()
     {
         return $this->hasOne(Produto::class, 'codprod', 'idproduto'); // Class, chave da tabela estrangeira, chave estrangeira
+    }
+    public function grade()
+    {
+        return $this->hasMany(Pedidoitensgrades::class, 'idproduto', 'idproduto'); // Class, chave da tabela estrangeira, chave estrangeira
     }
 }

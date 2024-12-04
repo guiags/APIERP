@@ -4,6 +4,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\Produtopreco;
 use App\Models\Produtolote;
+use App\Models\Produtograde;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -27,5 +28,10 @@ class Produto extends Model
     public function pedidoitens()
     {
         return $this->belongsTo(Pedidoitens::class, 'idproduto');
+    }
+
+    public function grades()
+    {
+        return $this->hasMany(Produtograde::class, 'codprod'); // Ajuste a chave estrangeira conforme sua tabela
     }
 }

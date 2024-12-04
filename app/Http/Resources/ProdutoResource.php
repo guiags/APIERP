@@ -29,7 +29,8 @@ class ProdutoResource extends JsonResource
             'usalote' => $this->usalote,
             'inativo' => $this->inativo,
             'precos' => $this->precos,
-            'lotes' => $this->lotes
+            'lotes' => $this->lotes,
+            'grades' => $this->grades
         ];
     }
 }

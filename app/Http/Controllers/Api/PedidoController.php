@@ -33,7 +33,7 @@ class PedidoController extends Controller
             $idvendedor = $request->query('idvendedor');
             $intervalo = $request->query('intervalo');
             $tipo = $request->query('tipo');
-            $pedidos = Pedido::with('itens', 'cliente', 'itens.produto', 'itens.produto.lotes');
+            $pedidos = Pedido::with('itens', 'cliente', 'itens.produto', 'itens.produto.lotes', 'itens.grade');
 
             if(!empty($intervalo)){
                 list($dataInicio, $dataFim) = explode('_', $intervalo);

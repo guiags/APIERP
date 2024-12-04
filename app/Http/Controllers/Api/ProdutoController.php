@@ -6,6 +6,7 @@ use App\Models\Produto;
 use App\Models\Banco;
 use App\Models\Produtopreco;
 use App\Models\Produtolote;
+use App\Models\Produtograde;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreProdutoRequest;
@@ -32,7 +33,7 @@ class ProdutoController extends Controller
                             ], 404);
         }
         else{
-            $produtos = Produto::with('precos', 'lotes')->get();
+            $produtos = Produto::with('precos', 'lotes', 'grades')->get();
             $this->rolbackDatabaseConnection();
             
             $produtos->each(function ($produto) {
@@ -43,6 +44,11 @@ class ProdutoController extends Controller
             $produtos->each(function ($produto) {
                 $produto->lotes->each(function ($lote) {
                     $lote->makeHidden('codprod');
+                });
+            });
+            $produtos->each(function ($produto) {
+                $produto->grades->each(function ($grade) {
+                    $grade->makeHidden('codprod');
                 });
             });
             //return response()->json($produtos);
@@ -86,6 +92,10 @@ class ProdutoController extends Controller
                     foreach($lotes as $lote){
                         Produtolote::create($lote);
                     }
+                    $grades = $produto['grades'];
+                    foreach($grades as $grade){
+                        Produtograde::create($grade);
+                    }
                     $prod = Produto::create($produto);
                     DB::commit();
                     array_push($responsecodssuc, $auxiliar);
@@ -125,7 +135,7 @@ class ProdutoController extends Controller
                                 ], 404);   
             }
             else{
-                $produto = Produto::with('precos', 'lotes')->find($id);
+                $produto = Produto::with('precos', 'lotes', 'grades')->find($id);
                 if(!$produto){
                     $this->rolbackDatabaseConnection();
                     return response()->json(['erro' => '404',
@@ -183,6 +193,11 @@ class ProdutoController extends Controller
                 DB::table('produtos_lotes')->where('codprod', $id)->delete();
             }
 
+            $produtograde = DB::table('produtos_grades')->where('codprod', $id)->first();
+            if ($produtograde) {
+                DB::table('produtos_grades')->where('codprod', $id)->delete();
+            }
+
             $precos = $request->input('precos');
             foreach($precos as $preco){
                 Produtopreco::create($preco);
@@ -191,6 +206,11 @@ class ProdutoController extends Controller
             $lotes = $request->input('lotes');
             foreach($lotes as $lote){
                 Produtolote::create($lote);
+            }
+
+            $grades = $request->input('grades');
+            foreach($grades as $grade){
+                Produtograde::create($grade);
             }
 
             DB::table('produtos')
@@ -222,6 +242,11 @@ class ProdutoController extends Controller
             $produtolote = DB::table('produtos_lotes')->where('codprod', $id)->first();
             if ($produtolote) {
                 DB::table('produtos_lotes')->where('codprod', $id)->delete();
+            }
+
+            $produtograde = DB::table('produtos_grades')->where('codprod', $id)->first();
+            if ($produtograde) {
+                DB::table('produtos_grades')->where('codprod', $id)->delete();
             }
 
             $produto = DB::table('produtos')->where('codprod', $id)->first();

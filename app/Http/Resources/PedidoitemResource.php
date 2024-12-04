@@ -36,7 +36,8 @@ class PedidoitemResource extends JsonResource
             'vrdescunit'=> $this->vrdescunit,
             'vrunitoriginal'=> $this->vrunitoriginal,
             'percacresunit'=> $this->percacresunit,
-            'vracresunit'=> $this->vracresunit
+            'vracresunit'=> $this->vracresunit,
+            'grades'=> $this->grade
         ];
     }
 }
