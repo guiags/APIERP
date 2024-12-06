@@ -16,7 +16,8 @@ class PedidoResource extends JsonResource
     {
         return [
             'id'=> $this->id, 
-            'emissao'=> $this->emissao, 
+            'emissao'=> $this->emissao,
+            'entrega'=>$this->entrega, 
             'tipo'=> $this->tipo, 
             'status'=> $this->status, 
             'idcliente'=> $this->idcliente,
@@ -24,20 +25,20 @@ class PedidoResource extends JsonResource
             'cpfcnpj'=> optional($this->cliente)->cpfcnpj,
             'clientenovo'=> optional($this->cliente)->novo,
             //'nomepessoa'=> $this->cliente,
-            'percdesc'=> $this->percdesc, 
-            'vrdesc'=> $this->vrdesc, 
-            'vrbruto'=> $this->vrbruto, 
-            'vrliquido'=> $this->vrliquido, 
+            'percdesc'=> (float) $this->percdesc, 
+            'vrdesc'=> (float) $this->vrdesc, 
+            'vrbruto'=> (float) $this->vrbruto, 
+            'vrliquido'=> (float) $this->vrliquido, 
             'obs'=> $this->obs, 
             'idformapag1'=> $this->idformapag1, 
             'idformapag2'=> $this->idformapag2, 
             'idplanopag1'=> $this->idplanopag1, 
             'idplanopag2'=> $this->idplanopag2, 
-            'vrpago1'=> $this->vrpago1, 
-            'vrpago2'=> $this->vrpago2, 
+            'vrpago1'=> (float) $this->vrpago1, 
+            'vrpago2'=> (float) $this->vrpago2, 
             'idvendedor'=> $this->idvendedor, 
-            'vrcomis'=> $this->vrcomis, 
-            'perccomis'=> $this->perccomis,
+            'vrcomis'=> (float) $this->vrcomis, 
+            'perccomis'=> (float) $this->perccomis,
             'itens' =>// $this->itens
             PedidoitemResource::collection($this->whenLoaded('itens'))
 

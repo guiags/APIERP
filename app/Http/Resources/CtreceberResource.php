@@ -21,11 +21,11 @@ class CtreceberResource extends JsonResource
             'datavenc' => $this->datavenc, 
             'codcli' => $this->codcli, 
             'nomecli' => $this->nomecli, 
-            'vrdoc' => $this->vrdoc, 
+            'vrdoc' => (float) $this->vrdoc, 
             'conta' => $this->conta, 
             'planopag' => $this->planopag, 
             'datapago' => $this->datapago, 
-            'vrpago' => $this->vrpago, 
+            'vrpago' => (float) $this->vrpago, 
             'situacao' => $this->situacao
         ];
     }

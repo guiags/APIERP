@@ -22,13 +22,14 @@ class ProdutoResource extends JsonResource
             'codgrupo' => $this->codgrupo,
             'unidade' => $this->unidade,
             'codbarras' => $this->codbarras,
-            'preco' => $this->preco,
+            'preco' => (float) $this->preco,
             'fotoprod' => $this->fotoprod,
             'usagrade' => $this->usagrade,
-            'estoque' => $this->estoque,
+            'estoque' => (float) $this->estoque,
             'usalote' => $this->usalote,
             'inativo' => $this->inativo,
-            'precos' => $this->precos,
+            //'precos' => $this->precos,
+            'precos' => ProdutoprecoResource::collection($this->whenLoaded('precos')),
             'lotes' => $this->lotes,
             'grades' => $this->grades
         ];

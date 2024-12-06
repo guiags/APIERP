@@ -36,11 +36,11 @@ class ProdutoController extends Controller
             $produtos = Produto::with('precos', 'lotes', 'grades')->get();
             $this->rolbackDatabaseConnection();
             
-            $produtos->each(function ($produto) {
+            /*$produtos->each(function ($produto) {
                 $produto->precos->each(function ($preco) {
                     $preco->makeHidden('codprod');
                 });
-            });
+            });*/
             $produtos->each(function ($produto) {
                 $produto->lotes->each(function ($lote) {
                     $lote->makeHidden('codprod');
@@ -51,6 +51,7 @@ class ProdutoController extends Controller
                     $grade->makeHidden('codprod');
                 });
             });
+            //$json = json_encode($produtos, JSON_NUMERIC_CHECK);
             //return response()->json($produtos);
             return ProdutoResource::collection($produtos);    
         } 

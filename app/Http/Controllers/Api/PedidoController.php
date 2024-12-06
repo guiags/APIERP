@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Models\Pedido;
 use App\Models\Banco;
 use App\Models\Pedidoitens;
+use App\Models\Pedidoitensgrades;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\StorePedidoRequest;
@@ -94,6 +95,7 @@ class PedidoController extends Controller
             $auxiliar = 0;
             $responsecodssuc=[];
             $responsecodsermes=[];
+            $vaidationgerrors=[];
             foreach($pedidos as $pedido){
                 $vaidationiterrors=[];
                 $vaidationerrors=[];
@@ -152,10 +154,19 @@ class PedidoController extends Controller
                             if($item['unidade'] == null){
                                 array_push($vaidationiterrors, 'unidade');
                             }
-
+                            $grades = $item['grades'];
+                            if(empty($vaidationerrors)) {
+                                if($grades != null){
+                                    foreach($grades as $grade){
+                                        Pedidoitensgrades::create($grade);
+                                    }
+                                }
+                            }
                             Pedidoitens::create($item);
                         }
                     }
+
+                    
                     Pedido::create($pedido);
                     DB::commit();
                     array_push($responsecodssuc, $auxiliar);
@@ -164,7 +175,7 @@ class PedidoController extends Controller
                     
 
                     if(empty($vaidationerrors) && empty($vaidationtierrors)){
-                        $auxiliar = ['Numped' => $auxiliar,
+                        $auxiliar = ['numped' => $auxiliar,
                             'message'=> $e->errorInfo[2]];
                     }else{
                         $auxiliarnulos ='';
@@ -219,7 +230,7 @@ class PedidoController extends Controller
                                 ], 404);   
             }
             else{
-                $pedido = Pedido::with('itens', 'cliente', 'itens.produto')->find($id);
+                $pedido = Pedido::with('itens', 'cliente', 'itens.produto', 'itens.grade')->find($id);
                 if(!$pedido){
                     $this->rolbackDatabaseConnection();
                     return response()->json(['erro' => '404',
@@ -267,14 +278,24 @@ class PedidoController extends Controller
                 'message' => 'Pedido nao encontrado.',
                                     ], 404);
             }
-            $pedidoitem = DB::table('pedido_itens')->where('idpedido', $id)->first();
-            if ($pedidoitem) {
+            /*$pedidoitem = DB::table('pedido_itens')->where('idpedido', $id)->first();
+            if ($pedidoitem) {*/
                 DB::table('pedido_itens')->where('idpedido', $id)->delete();
-            }
+            //}
+            //$pedidograde = DB::table('pedido_itens_grades')->where('idpedido', $id)->first();
+            //if ($pedidograde) {
+                DB::table('pedido_itens_grades')->where('idpedido', $id)->delete();
+            //}
 
-
+                                   
             $itens = $request->input('itens');
             foreach($itens as $item){
+                $grades = $item['grades'];
+                if($grades != null){
+                    foreach($grades as $grade){
+                        Pedidoitensgrades::create($grade);
+                    }
+                }
                 Pedidoitens::create($item);
             }
 
@@ -284,7 +305,7 @@ class PedidoController extends Controller
             ->update($request->only(['id', 'emissao', 'tipo', 'status', 'idcliente', 'entrega', 'percdesc', 'vrdesc', 'vrbruto', 'vrliquido', 'obs', 'idformapag1', 'idformapag2', 'idplanopag1', 'idplanopag2', 'vrpago1', 'vrpago2', 'idvendedor', 'vrcomis', 'perccomis']));  
 
             $this->rolbackDatabaseConnection();
-            return new PedidoResource($request);
+            return $request;//new PedidoResource($request);
         }
     }
 
@@ -303,6 +324,11 @@ class PedidoController extends Controller
             $pedidoitem = DB::table('pedido_itens')->where('idpedido', $id)->first();
             if ($pedidoitem) {
                 DB::table('pedido_itens')->where('idpedido', $id)->delete();
+            }
+
+            $pedidoitemgrade = DB::table('pedido_itens_grades')->where('idpedido', $id)->first();
+            if ($pedidoitemgrade) {
+                DB::table('pedido_itens_grades')->where('idpedido', $id)->delete();
             }
 
             $pedido= DB::table('pedido')->where('id', $id)->first();
@@ -339,9 +365,18 @@ class PedidoController extends Controller
         if(empty($tipo)){
             DB::table('pedido')->where('idvendedor', $idvendedor)->delete();
             DB::table('pedido_itens')->where('idvendedor', $idvendedor)->delete();
+            DB::table('pedido_itens_grades')
+                ->join('pedido', 'pedido_itens_grades.idpedido', '=', 'pedido.id')  // Assumindo que 'idpedido' seja a chave de relacionamento
+                ->where('pedido.idvendedor', $idvendedor)
+                ->delete();
         }else{
             DB::table('pedido_itens')
                 ->join('pedido', 'pedido_itens.idpedido', '=', 'pedido.id')  // Assumindo que 'idpedido' seja a chave de relacionamento
+                ->where('pedido.tipo', $tipo)
+                ->where('pedido.idvendedor', $idvendedor)
+                ->delete();
+            DB::table('pedido_itens_grades')
+                ->join('pedido', 'pedido_itens_grades.idpedido', '=', 'pedido.id')  // Assumindo que 'idpedido' seja a chave de relacionamento
                 ->where('pedido.tipo', $tipo)
                 ->where('pedido.idvendedor', $idvendedor)
                 ->delete();
