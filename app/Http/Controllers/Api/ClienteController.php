@@ -28,7 +28,15 @@ class ClienteController extends Controller
                             ], 404);
         }
         else{
-            $clientes = Cliente::all();
+            $idvendedor = $request->query('idvendedor');
+            //$pedidos = HistPedido::with('itens');
+
+            if(!empty($idvendedor)){
+                $clientes = Cliente::where('idvendedor', $idvendedor)->get();
+            }else{
+                $clientes = Cliente::all();
+            }
+
             $this->rolbackDatabaseConnection();
             return ClienteResource::collection($clientes);    
         }    

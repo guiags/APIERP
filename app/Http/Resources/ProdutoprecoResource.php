@@ -16,7 +16,7 @@ class ProdutoprecoResource extends JsonResource
     {
         return [
            'codpreco' => $this->codpreco,
-           'preco' => (float)$this->preco, 
+           'preco' =>round((float)$this->preco, 4), 
            'descricao' => $this->descricao    
         ];
     }

@@ -208,6 +208,10 @@ class PedidoController extends Controller
                 }   
             }
             $this->rolbackDatabaseConnection();
+            if(empty($responsecodsermes)){
+                return response()->json([
+                    'sucesso' => $responsecodssuc], 200);     
+            }
             return response()->json([
                                 'erro' => $responsecodsermes,
                                 'sucesso' => $responsecodssuc], 200); 

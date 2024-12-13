@@ -29,7 +29,31 @@ class HistpedidoController extends Controller
                             ], 404);
         }
         else{
-            $pedidos = Histpedido::with('itens')->get();
+                $idvendedor = $request->query('idvendedor');
+                $intervalo = $request->query('intervalo');
+                $pedidos = HistPedido::with('itens');
+    
+                if(!empty($intervalo)){
+                    list($dataInicio, $dataFim) = explode('_', $intervalo);
+                    $dataInicio = \Carbon\Carbon::createFromFormat('Y-m-d', $dataInicio);
+                    $dataFim = \Carbon\Carbon::createFromFormat('Y-m-d', $dataFim);
+                    //return response()->json([$dataInicio->toDateString(), $dataFim->toDateString()]);
+                    $pedidos->whereBetween('emissao', [$dataInicio->toDateString(), $dataFim->toDateString()]);    
+                }
+                if(!empty($idvendedor)){
+                    $pedidos->where('idvendedor', $idvendedor);
+                }
+                $pedidos = $pedidos->get();
+                
+                $this->rolbackDatabaseConnection();
+                
+                $pedidos->each(function ($pedido) {
+                    $pedido->itens->each(function ($item) {
+                        $item->makeHidden('idpedido');
+                    });
+                });
+                return HistPedidoResource::collection($pedidos);
+            /*$pedidos = Histpedido::with('itens')->get();
             $this->rolbackDatabaseConnection();
             
             $pedidos->each(function ($pedido) {
@@ -38,7 +62,7 @@ class HistpedidoController extends Controller
                 });
             });
             //return response()->json($produtos);
-            return HistpedidoResource::collection($pedidos);    
+            return HistpedidoResource::collection($pedidos);*/    
         } 
     }
 

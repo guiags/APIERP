@@ -19,7 +19,7 @@ class ProdutoloteResource extends JsonResource
             'numlote' => $this->numlote,
             'datafab' => $this->datafab,
             'dataval' => $this->dataval,
-            'estoque' => (float) $this->estoque
+            'estoque' => round((float)$this->estoque, 4)
         ];
     }
 }

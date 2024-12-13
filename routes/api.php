@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\HistpedidoController;
 use App\Http\Controllers\Api\CtreceberController;
 use App\Http\Controllers\Api\DashboardvendasController;
 use App\Http\Controllers\Api\ProdutoimagemController;
+use App\Http\Controllers\RelatorioController;
 
 /*Route::get('/user', function (Request $request) {
     return $request->user();
@@ -93,3 +94,5 @@ Route::delete('pedido/idvendedor/{idvendedor}', [PedidoController::class, 'destr
 Route::get('ultimo/pedido/', [PedidoController::class, 'showUltimoPedido']);
 
 Route::get('produtos/lotes/{codprod}', [ProdutoController::class, 'showProdutosByCodprod']);
+
+Route::post('gerar-relatorio', [RelatorioController::class, 'gerarRelatorio']);

@@ -41,16 +41,16 @@ class ProdutoController extends Controller
                     $preco->makeHidden('codprod');
                 });
             });*/
-            $produtos->each(function ($produto) {
+            /*$produtos->each(function ($produto) {
                 $produto->lotes->each(function ($lote) {
                     $lote->makeHidden('codprod');
                 });
-            });
-            $produtos->each(function ($produto) {
+            });*/
+            /*$produtos->each(function ($produto) {
                 $produto->grades->each(function ($grade) {
                     $grade->makeHidden('codprod');
                 });
-            });
+            });*/
             //$json = json_encode($produtos, JSON_NUMERIC_CHECK);
             //return response()->json($produtos);
             return ProdutoResource::collection($produtos);    

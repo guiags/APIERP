@@ -18,7 +18,7 @@ class DashboardvendasResource extends JsonResource
             'idvendedor' => $this->idvendedor,
             'mes' => $this->mes, 
             'ano' => $this->ano, 
-            'valor' => (float) $this->valor
+            'valor' => round((float)$this->valor, 4)
         ];
     }
 }

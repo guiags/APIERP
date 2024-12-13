@@ -22,16 +22,18 @@ class ProdutoResource extends JsonResource
             'codgrupo' => $this->codgrupo,
             'unidade' => $this->unidade,
             'codbarras' => $this->codbarras,
-            'preco' => (float) $this->preco,
+            'preco' => round((float)$this->preco, 4),
             'fotoprod' => $this->fotoprod,
             'usagrade' => $this->usagrade,
-            'estoque' => (float) $this->estoque,
+            'estoque' => round((float)$this->estoque, 4),
             'usalote' => $this->usalote,
             'inativo' => $this->inativo,
             //'precos' => $this->precos,
             'precos' => ProdutoprecoResource::collection($this->whenLoaded('precos')),
-            'lotes' => $this->lotes,
-            'grades' => $this->grades
+            //'lotes' => $this->lotes,
+            'lotes' => ProdutoloteResource::collection($this->whenLoaded('lotes')),
+            //'grades' => $this->grades
+            'grades' => ProdutogradeResource::collection($this->whenLoaded('grades'))
         ];
     }
 }

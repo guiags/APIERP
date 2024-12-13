@@ -50,13 +50,13 @@ class ProdutoimagemController extends Controller
                 //$extension = $image_file->extension();
                 $imageName = $img['nome'].'.png';
 
-                $directoryPath = public_path($aux.'\\produtos\\imagens\\'.$img['codprod'].'\\');
+                $directoryPath = public_path($aux.'/produtos/imagens/'.$img['codprod'].'/');
             
                 if (!File::exists($directoryPath)) {
                     File::makeDirectory($directoryPath, 0777, true);
                 }
 
-                $imagePath = public_path($aux.'\\produtos\\imagens\\'.$img['codprod'].'\\'.$imageName);
+                $imagePath = public_path($aux.'/produtos/imagens/'.$img['codprod'].'/'.$imageName);
                 file_put_contents($imagePath, $image_file);
                 //$image_file->move(public_path('img/produtos'));
                 $img['nome'] = $imageName;
