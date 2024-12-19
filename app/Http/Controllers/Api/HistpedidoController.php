@@ -31,7 +31,7 @@ class HistpedidoController extends Controller
         else{
                 $idvendedor = $request->query('idvendedor');
                 $intervalo = $request->query('intervalo');
-                $pedidos = HistPedido::with('itens');
+                $pedidos = HistPedido::with('itens','itens.produto'/*, 'itens.produto.lotes', 'itens.grade'*/);
     
                 if(!empty($intervalo)){
                     list($dataInicio, $dataFim) = explode('_', $intervalo);
@@ -47,11 +47,11 @@ class HistpedidoController extends Controller
                 
                 $this->rolbackDatabaseConnection();
                 
-                $pedidos->each(function ($pedido) {
+                /*$pedidos->each(function ($pedido) {
                     $pedido->itens->each(function ($item) {
                         $item->makeHidden('idpedido');
                     });
-                });
+                });*/
                 return HistPedidoResource::collection($pedidos);
             /*$pedidos = Histpedido::with('itens')->get();
             $this->rolbackDatabaseConnection();

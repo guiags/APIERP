@@ -18,4 +18,9 @@ class Histpedidoitens extends Model
     {
         return $this->belongsTo(Histpedido::class, 'id');
     }
+
+    public function produto()
+    {
+        return $this->hasOne(Produto::class, 'codprod', 'idproduto'); // Class, chave da tabela estrangeira, chave estrangeira
+    }
 }
