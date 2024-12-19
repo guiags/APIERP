@@ -31,7 +31,7 @@ class HistpedidoController extends Controller
         else{
                 $idvendedor = $request->query('idvendedor');
                 $intervalo = $request->query('intervalo');
-                $pedidos = HistPedido::with('itens','itens.produto'/*, 'itens.produto.lotes', 'itens.grade'*/);
+                $pedidos = HistPedido::with('itens','itens.produto', 'itens.produto.lotes', 'itens.grade');
     
                 if(!empty($intervalo)){
                     list($dataInicio, $dataFim) = explode('_', $intervalo);

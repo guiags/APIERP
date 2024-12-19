@@ -23,4 +23,8 @@ class Histpedidoitens extends Model
     {
         return $this->hasOne(Produto::class, 'codprod', 'idproduto'); // Class, chave da tabela estrangeira, chave estrangeira
     }
+    public function grade()
+    {
+        return $this->hasMany(Pedidoitensgrades::class, 'idproduto', 'idproduto'); // Class, chave da tabela estrangeira, chave estrangeira
+    }
 }
