@@ -409,9 +409,8 @@ class PedidoController extends Controller
         $pedido= Pedido::max('id');
         if (!$pedido) {
             $this->rolbackDatabaseConnection();
-            return response()->json(['erro' => '404',
-            'message' => 'Pedido nao encontrado.',
-                                ], 404);
+            return response()->json(['numped' => 0,
+                                ], 200);
         }
         $this->rolbackDatabaseConnection();
         return response()->json(['numped' => $pedido,
