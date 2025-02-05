@@ -33,7 +33,13 @@ class ProdutoController extends Controller
                             ], 404);
         }
         else{
-            $produtos = Produto::with('precos', 'lotes', 'grades')->get();
+            if($request->header('perpage') == null){
+                $produtos = Produto::with('precos', 'lotes', 'grades')->get();
+            }
+            else{
+                $perPage = $request->input('per_page', $request->header('perpage'));
+                $produtos = Produto::with('precos', 'lotes', 'grades')->paginate($perPage);
+            }
             $this->rolbackDatabaseConnection();
             
             /*$produtos->each(function ($produto) {
