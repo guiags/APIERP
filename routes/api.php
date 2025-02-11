@@ -96,3 +96,8 @@ Route::get('ultimo/pedido/', [PedidoController::class, 'showUltimoPedido']);
 Route::get('produtos/lotes/{codprod}', [ProdutoController::class, 'showProdutosByCodprod']);
 
 Route::post('gerar-relatorio', [RelatorioController::class, 'gerarRelatorio']);
+
+
+Route::middleware(['compress.response'])->group(function () {
+    Route::get('teste/produtos', [ProdutoController::class, 'index']);
+});
