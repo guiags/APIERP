@@ -37,7 +37,8 @@ class ClienteResource extends JsonResource
             'bloqueado' => $this->bloqueado, 
             'obsbloq' => $this->obsbloq, 
             'idvendedor' => $this->idvendedor, 
-            'novo' => $this->novo
+            'novo' => $this->novo,
+            'dt_modificacao' => $this->dt_modificacao
 
         ];    
     }

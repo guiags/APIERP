@@ -28,14 +28,29 @@ class ClienteController extends Controller
                             ], 404);
         }
         else{
-            $idvendedor = $request->query('idvendedor');
-            //$pedidos = HistPedido::with('itens');
 
-            if(!empty($idvendedor)){
-                $clientes = Cliente::where('idvendedor', $idvendedor)->get();
+            $dt_modificacao = $request->header('dt_modificacao');
+            $idvendedor = $request->query('idvendedor');
+            if(!empty($dt_modificacao)){
+                $dt_modificacao = \Carbon\Carbon::createFromFormat('Y-m-d', $dt_modificacao);
+
+                //return response()->json([$dataInicio->toDateString(), $dataFim->toDateString()]);
+                $clientes = Cliente::where('dt_modificacao', '>', $dt_modificacao->toDateString());
+                if(!empty($idvendedor)){
+                    $clientes = $clientes->where('idvendedor', $idvendedor)->get();
+                }else{
+                    $clientes = $clientes->get();
+                }    
             }else{
-                $clientes = Cliente::all();
+                if(!empty($idvendedor)){
+                    $clientes = Cliente::where('idvendedor', $idvendedor)->get();
+                }else{
+                    $clientes = Cliente::all();
+                }
             }
+
+
+            
 
             $this->rolbackDatabaseConnection();
             return ClienteResource::collection($clientes);    
@@ -219,10 +234,10 @@ class ClienteController extends Controller
                 'message' => 'Cliente nao encontrado.',
                                     ], 404);
             } 
+            //return $request;
             DB::table('clientes')
             ->where('codpessoa', $id)
-            ->update($request->only(['codpessoa', 'nomepessoa', 'tipopessoa', 'cpfcnpj', 'inscestadual', 'email', 'telefone1', 'telefone2', 'celular1', 'celular2', 'logradouro', 'numero', 'complemento', 'bairro', 'cidade', 'uf', 'cep', 'obs', 'datadocvenc', 'bloqueado', 'obsbloq', 'idvendedor', 'novo']));   
-
+            ->update($request->only(['codpessoa', 'nomepessoa', 'tipopessoa', 'cpfcnpj', 'inscestadual', 'email', 'telefone1', 'telefone2', 'celular1', 'celular2', 'logradouro', 'numero', 'complemento', 'bairro', 'cidade', 'uf', 'cep', 'obs', 'datadocvenc', 'bloqueado', 'obsbloq', 'idvendedor', 'novo', 'dt_modificacao']));
             //$cliente->update($request->all());
             $this->rolbackDatabaseConnection();
             return new ClienteResource($cliente);

@@ -19,7 +19,8 @@ class ConfigvendedorResource extends JsonResource
             'exibeclibloq' => $this->exibeclibloq,
             'listaprodvazia' => $this->listaprodvazia,
             'naoexibeimgprod' => $this->naoexibeimgprod,
-            'sincronizacao' => $this->sincronizacao
+            'sincronizacao' => $this->sincronizacao,
+            'dt_ult_sinc' => $this->dt_ult_sinc
         ];
     }
 }

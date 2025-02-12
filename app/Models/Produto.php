@@ -14,7 +14,7 @@ class Produto extends Model
     public $timestamps = false;
     protected $primaryKey = 'codprod';
     public $table = 'produtos';
-    protected $fillable = ['codprod', 'nome', 'descrcompleta', 'referencia', 'codgrupo', 'unidade', 'codbarras', 'preco', 'fotoprod', 'usagrade', 'estoque', 'usalote', 'inativo'];
+    protected $fillable = ['codprod', 'nome', 'descrcompleta', 'referencia', 'codgrupo', 'unidade', 'codbarras', 'preco', 'fotoprod', 'usagrade', 'estoque', 'usalote', 'inativo', 'dt_modificacao'];
 
     public function precos()
     {

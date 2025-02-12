@@ -120,7 +120,7 @@ class ConfigvendedorController extends Controller
             } 
             DB::table('config_vendedor')
             ->where('idvendedor', $id)
-            ->update($request->only(['exibeclibloq', 'listaprodvazia', 'naoexibeimgprod', 'sincronizacao']));   
+            ->update($request->only(['exibeclibloq', 'listaprodvazia', 'naoexibeimgprod', 'sincronizacao', 'dt_ult_sinc']));   
 
             $this->rolbackDatabaseConnection();
             return new ConfigvendedorResource($configvendedor);

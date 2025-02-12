@@ -11,5 +11,5 @@ class Configvendedor extends Model
     public $timestamps = false;
     protected $primaryKey = 'idvendedor';
     public $table = 'config_vendedor';
-    protected $fillable = ['idvendedor', 'exibeclibloq', 'listaprodvazia', 'naoexibeimgprod', 'sincronizacao'];
+    protected $fillable = ['idvendedor', 'exibeclibloq', 'listaprodvazia', 'naoexibeimgprod', 'sincronizacao', 'dt_ult_sinc'];
 }

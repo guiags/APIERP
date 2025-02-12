@@ -33,12 +33,21 @@ class ProdutoController extends Controller
                             ], 404);
         }
         else{
+            $dt_modificacao = $request->header('dt_modificacao');
+            $produtos = Produto::with('precos', 'lotes', 'grades');
+            if(!empty($dt_modificacao)){
+                $dt_modificacao = \Carbon\Carbon::createFromFormat('Y-m-d', $dt_modificacao);
+
+                //return response()->json([$dataInicio->toDateString(), $dataFim->toDateString()]);
+                $produtos->where('dt_modificacao', '>', $dt_modificacao->toDateString());    
+            }
+
             if($request->header('perpage') == null){
-                $produtos = Produto::with('precos', 'lotes', 'grades')->get();
+                $produtos = $produtos->get();
             }
             else{
                 $perPage = $request->input('per_page', $request->header('perpage'));
-                $produtos = Produto::with('precos', 'lotes', 'grades')->paginate($perPage);
+                $produtos = $produtos->paginate($perPage);
             }
             $this->rolbackDatabaseConnection();
             
@@ -222,10 +231,14 @@ class ProdutoController extends Controller
 
             DB::table('produtos')
             ->where('codprod', $id)
-            ->update($request->only(['codprod', 'nome', 'descrcompleta', 'referencia', 'codgrupo', 'unidade', 'codbarras', 'preco', 'fotoprod', 'usagrade', 'estoque', 'usalote', 'inativo']));  
+            ->update($request->only(['codprod', 'nome', 'descrcompleta', 'referencia', 'codgrupo', 'unidade', 'codbarras', 'preco', 'fotoprod', 'usagrade', 'estoque', 'usalote', 'inativo', 'dt_modificacao']));  
+
+
+            //return $precos;
+
 
             $this->rolbackDatabaseConnection();
-            return new ProdutoResource($request);
+            return $request;//new ProdutoResource($request);
         }
     }
 
