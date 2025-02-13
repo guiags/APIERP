@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\CtreceberController;
 use App\Http\Controllers\Api\DashboardvendasController;
 use App\Http\Controllers\Api\ProdutoimagemController;
 use App\Http\Controllers\RelatorioController;
+use App\Http\Controllers\Api\NavegadorRequestController;
 
 /*Route::get('/user', function (Request $request) {
     return $request->user();
@@ -101,3 +102,5 @@ Route::post('gerar-relatorio', [RelatorioController::class, 'gerarRelatorio']);
 Route::middleware(['compress.response'])->group(function () {
     Route::get('teste/produtos', [ProdutoController::class, 'index']);
 });
+
+Route::get('viaurl/produtos/', [NavegadorRequestController::class, 'indexNavegador']);
