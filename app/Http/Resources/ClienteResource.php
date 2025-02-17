@@ -38,7 +38,7 @@ class ClienteResource extends JsonResource
             'obsbloq' => $this->obsbloq, 
             'idvendedor' => $this->idvendedor, 
             'novo' => $this->novo,
-            'dt_modificacao' => $this->dt_modificacao
+            'dtmodificacao' => $this->dtmodificacao
 
         ];    
     }

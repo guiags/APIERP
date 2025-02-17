@@ -29,13 +29,13 @@ class ClienteController extends Controller
         }
         else{
 
-            $dt_modificacao = $request->header('dt_modificacao');
+            $dt_modificacao = $request->header('dtmodificacao');
             $idvendedor = $request->query('idvendedor');
             if(!empty($dt_modificacao)){
-                $dt_modificacao = \Carbon\Carbon::createFromFormat('Y-m-d', $dt_modificacao);
+                $dt_modificacao = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $dt_modificacao);
 
                 //return response()->json([$dataInicio->toDateString(), $dataFim->toDateString()]);
-                $clientes = Cliente::where('dt_modificacao', '>', $dt_modificacao->toDateString());
+                $clientes = Cliente::where('dtmodificacao', '>', $dt_modificacao->toDateTimeString());
                 if(!empty($idvendedor)){
                     $clientes = $clientes->where('idvendedor', $idvendedor)->get();
                 }else{
@@ -97,14 +97,14 @@ class ClienteController extends Controller
                     }
                     else{
                         $auxiliar = ['cpfcnpj' => $auxiliar,
-                                        'erro' => 'O cpf/cpnj já consta na base.'];
+                                        'erro' => 'O cpf/cpnj ja consta na base.'];
                         array_push($responsecodsermes, $auxiliar);    
                     }                    
                 } catch (\Exception $e) {
                     DB::rollback();
                     if($e->errorInfo[1] == 1062){
                         $auxiliar = ['cpfcnpj' => $auxiliar,
-                                'message'=> 'O Cliente já consta na base de dados.'];    
+                                'message'=> 'O Cliente ja consta na base de dados.'];    
                     }else{
                         if($cliente['cpfcnpj'] == null){
                             array_push($vaidationerrors, 'cpfcnpj');
@@ -145,10 +145,10 @@ class ClienteController extends Controller
 
                             if($auxiliar==null){
                                 $auxiliar = ['nome' => $cliente['nomepessoa'],
-                                'message'=> "Os seguintes campos não estão preenchidos: ". $auxiliarnulos];
+                                'message'=> "Os seguintes campos nao estao preenchidos: ". $auxiliarnulos];
                             }else{
                                 $auxiliar = ['cpfcnpj' => $auxiliar,
-                                'message'=> "Os seguintes campos não estão preenchidos: ". $auxiliarnulos];
+                                'message'=> "Os seguintes campos nao estao preenchidos: ". $auxiliarnulos];
                             }
                         }
                     }
@@ -181,8 +181,8 @@ class ClienteController extends Controller
             else{
                 $cliente = Cliente::findOrFail($id);
                 if(!$cliente){
-                    response('Cliente não encontrado!', 404)->json([
-                        'message' => 'Cliente não encontrado.'
+                    response('Cliente nao encontrado!', 404)->json([
+                        'message' => 'Cliente nao encontrado.'
                     ], 404);
                 }
                 else{
@@ -194,7 +194,7 @@ class ClienteController extends Controller
         } catch (ModelNotFoundException $e) {
             $this->rolbackDatabaseConnection();
             return response()->json([
-                'message' => 'Cliente não encontrado.' + $e
+                'message' => 'Cliente nao encontrado.' + $e
             ], 404);
         }
     }
@@ -237,7 +237,7 @@ class ClienteController extends Controller
             //return $request;
             DB::table('clientes')
             ->where('codpessoa', $id)
-            ->update($request->only(['codpessoa', 'nomepessoa', 'tipopessoa', 'cpfcnpj', 'inscestadual', 'email', 'telefone1', 'telefone2', 'celular1', 'celular2', 'logradouro', 'numero', 'complemento', 'bairro', 'cidade', 'uf', 'cep', 'obs', 'datadocvenc', 'bloqueado', 'obsbloq', 'idvendedor', 'novo', 'dt_modificacao']));
+            ->update($request->only(['codpessoa', 'nomepessoa', 'tipopessoa', 'cpfcnpj', 'inscestadual', 'email', 'telefone1', 'telefone2', 'celular1', 'celular2', 'logradouro', 'numero', 'complemento', 'bairro', 'cidade', 'uf', 'cep', 'obs', 'datadocvenc', 'bloqueado', 'obsbloq', 'idvendedor', 'novo', 'dtmodificacao']));
             //$cliente->update($request->all());
             $this->rolbackDatabaseConnection();
             return new ClienteResource($cliente);
@@ -337,7 +337,7 @@ class ClienteController extends Controller
         else{
             DB::table('clientes')
             ->where('cpfcnpj', $cpfcnpj)
-            ->update($request->only(['nomepessoa', 'tipopessoa', 'cpfcnpj', 'inscestadual', 'email', 'telefone1', 'telefone2', 'celular1', 'celular2', 'logradouro', 'numero', 'complemento', 'bairro', 'cidade', 'uf', 'cep', 'obs', 'datadocvenc', 'bloqueado', 'obsbloq', 'idvendedor', 'novo']));   
+            ->update($request->only(['nomepessoa', 'tipopessoa', 'cpfcnpj', 'inscestadual', 'email', 'telefone1', 'telefone2', 'celular1', 'celular2', 'logradouro', 'numero', 'complemento', 'bairro', 'cidade', 'uf', 'cep', 'obs', 'datadocvenc', 'bloqueado', 'obsbloq', 'idvendedor', 'novo', 'dtmodificacao']));   
             $this->rolbackDatabaseConnection();
             return new ClienteResource($cliente);
         }

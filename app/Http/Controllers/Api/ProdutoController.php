@@ -33,13 +33,13 @@ class ProdutoController extends Controller
                             ], 404);
         }
         else{
-            $dt_modificacao = $request->header('dt_modificacao');
+            $dt_modificacao = $request->header('dtmodificacao');
             $produtos = Produto::with('precos', 'lotes', 'grades');
             if(!empty($dt_modificacao)){
-                $dt_modificacao = \Carbon\Carbon::createFromFormat('Y-m-d', $dt_modificacao);
+                $dt_modificacao = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $dt_modificacao);
 
                 //return response()->json([$dataInicio->toDateString(), $dataFim->toDateString()]);
-                $produtos->where('dt_modificacao', '>', $dt_modificacao->toDateString());    
+                $produtos->where('dtmodificacao', '>', $dt_modificacao->toDateTimeString());    
             }
 
             if($request->header('perpage') == null){
@@ -119,7 +119,7 @@ class ProdutoController extends Controller
                     DB::rollback();
                     if($e->errorInfo[1] == 1062){
                         $auxiliar = ['codprod' => $auxiliar,
-                                'erro'=> 'O Produto já consta na base de dados.'];    
+                                'erro'=> 'O Produto ja consta na base de dados.'];    
                     }else{
                         $auxiliar = ['codprod' => $auxiliar,
                                 'message'=> $e->errorInfo[2]];
@@ -231,7 +231,7 @@ class ProdutoController extends Controller
 
             DB::table('produtos')
             ->where('codprod', $id)
-            ->update($request->only(['codprod', 'nome', 'descrcompleta', 'referencia', 'codgrupo', 'unidade', 'codbarras', 'preco', 'fotoprod', 'usagrade', 'estoque', 'usalote', 'inativo', 'dt_modificacao']));  
+            ->update($request->only(['codprod', 'nome', 'descrcompleta', 'referencia', 'codgrupo', 'unidade', 'codbarras', 'preco', 'fotoprod', 'usagrade', 'estoque', 'usalote', 'inativo', 'dtmodificacao']));  
 
 
             //return $precos;
