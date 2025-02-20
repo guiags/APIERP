@@ -240,7 +240,7 @@ class ClienteController extends Controller
             ->update($request->only(['codpessoa', 'nomepessoa', 'tipopessoa', 'cpfcnpj', 'inscestadual', 'email', 'telefone1', 'telefone2', 'celular1', 'celular2', 'logradouro', 'numero', 'complemento', 'bairro', 'cidade', 'uf', 'cep', 'obs', 'datadocvenc', 'bloqueado', 'obsbloq', 'idvendedor', 'novo', 'dtmodificacao']));
             //$cliente->update($request->all());
             $this->rolbackDatabaseConnection();
-            return new ClienteResource($cliente);
+            return new ClienteResource($request);
         }
 
 

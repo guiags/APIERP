@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\DashboardvendasController;
 use App\Http\Controllers\Api\ProdutoimagemController;
 use App\Http\Controllers\RelatorioController;
 use App\Http\Controllers\Api\NavegadorRequestController;
+use App\Http\Controllers\Api\LotesController;
 
 /*Route::get('/user', function (Request $request) {
     return $request->user();
@@ -104,3 +105,5 @@ Route::middleware(['compress.response'])->group(function () {
 });
 
 Route::get('viaurl/produtos/', [NavegadorRequestController::class, 'indexNavegador']);
+
+Route::post('lote/produtos/', [LotesController::class, 'loteProdutos']);

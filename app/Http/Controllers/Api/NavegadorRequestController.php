@@ -30,13 +30,13 @@ class NavegadorRequestController extends Controller
                             ], 404);
         }
         else{
-            $dt_modificacao = $request->header('dt_modificacao');
+            $dt_modificacao = $request->query('dtmodificacao');
             $produtos = Produto::with('precos', 'lotes', 'grades');
             if(!empty($dt_modificacao)){
-                $dt_modificacao = \Carbon\Carbon::createFromFormat('Y-m-d', $dt_modificacao);
+                $dt_modificacao = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $dt_modificacao);
 
                 //return response()->json([$dataInicio->toDateString(), $dataFim->toDateString()]);
-                $produtos->where('dt_modificacao', '>', $dt_modificacao->toDateString());    
+                $produtos->where('dtmodificacao', '>', $dt_modificacao->toDateTimeString());    
             }
 
             if($request->header('perpage') == null){
@@ -50,9 +50,9 @@ class NavegadorRequestController extends Controller
     
             return ProdutoResource::collection($produtos);    
         } 
-}
+    }
 
-public function changeDatabaseConnection(Request $request)
+    public function changeDatabaseConnection(Request $request)
     {
         $this->rolbackDatabaseConnection();
         $TokenRenovar = $request->query('TokenRenovar');
