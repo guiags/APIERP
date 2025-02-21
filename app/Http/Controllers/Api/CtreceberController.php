@@ -157,6 +157,23 @@ class CtreceberController extends Controller
         }
     }
 
+    public function destroyAll(Request $request)
+    {
+        $aux = $this->changeDatabaseConnection($request);
+        if(!$aux){
+            return response()->json(['erro' => '404',
+            'message' => 'Token Invalido.',
+                                ], 404);
+        }
+        else{
+            DB::table('ctreceber')->delete();
+            $this->rolbackDatabaseConnection();
+            return response()->json(['erro' => '204',
+                'message' => 'Todas as contas foram excluidas.',
+                                ], 204);
+        }
+    }
+
     public function changeDatabaseConnection(Request $request)
     {
         $this->rolbackDatabaseConnection();

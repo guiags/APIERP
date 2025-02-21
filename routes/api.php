@@ -91,6 +91,7 @@ Route::get('usuarios/idvendedor/{idvendedor}', [UsuarioController::class, 'showB
 Route::delete('usuarios/idvendedor/{idvendedor}', [UsuarioController::class, 'destroyByIdVendedor']);
 Route::put('usuarios/idvendedor/{idvendedor}', [UsuarioController::class, 'updateByIdVendedor']);
 
+Route::delete('deletar/ctreceber/', [CtreceberController::class, 'destroyAll']);
 
 Route::delete('pedido/idvendedor/{idvendedor}', [PedidoController::class, 'destroyByIdVendedor']);
 Route::get('ultimo/pedido/', [PedidoController::class, 'showUltimoPedido']);
@@ -107,3 +108,5 @@ Route::middleware(['compress.response'])->group(function () {
 Route::get('viaurl/produtos/', [NavegadorRequestController::class, 'indexNavegador']);
 
 Route::post('lote/produtos/', [LotesController::class, 'loteProdutos']);
+
+Route::post('lote/clientes/', [LotesController::class, 'loteClientes']);

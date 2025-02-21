@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Produto;
+use App\Models\Cliente;
 use App\Models\Banco;
 use App\Models\Produtopreco;
 use App\Models\Produtolote;
@@ -12,6 +13,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\StoreProdutoRequest;
 use App\Http\Requests\StoreProdutoprecoRequest;
 use App\Http\Resources\ProdutoResource;
+use App\Http\Resources\ClienteResource;
 use App\Http\Resources\ProdutoloteResource;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -129,7 +131,106 @@ class LotesController extends Controller
                 'erro' => $responsecodsermes,
                     'sucesso' => $responsecodssuc], 200); 
         
+    }
+
+
+    public function loteClientes(Request $request)
+    {
+    $error_count = 0;
+    $replaces = array("`renovar_teste`.", "`");
+    $aux = $this->changeDatabaseConnection($request);
+        if (!$aux){
+            return response()->json(['erro' => '404',
+            'message' => 'Token Invalido.',
+                            ], 404);
         }
+        else{
+            //$produtos = $request->input('data');
+            //$data = json_decode($produtos, true);
+            $auxiliar = 0;
+            $responsecodssuc=[];
+            $responsecodsermes=[];
+
+            //foreach ($request as $item) {
+                //if (isset($item['update'])) {
+                    $clientes_update = $request->input('update'); // Obtém o array de updates
+                    $update = [];
+                    $update_er = [];
+                    foreach($clientes_update as $cliente){
+                        $auxiliar = $cliente['cpfcnpj'];
+                        
+                        ///return $produto;
+                        Try{
+                            if (!DB::table('clientes')->where('cpfcnpj', $auxiliar)->first()) {
+                                array_push($update_er, [$auxiliar => '404 - Cliente nao encontrado']);
+                                $error_count++;
+                            }else{ 
+                                DB::table('clientes')
+                                ->where('cpfcnpj', $auxiliar)
+                                ->update(collect($cliente)->only(['codpessoa', 'nomepessoa', 'tipopessoa', 'cpfcnpj', 'inscestadual', 'email', 'telefone1', 'telefone2', 'celular1', 'celular2', 'logradouro', 'numero', 'complemento', 'bairro', 'cidade', 'uf', 'cep', 'obs', 'datadocvenc', 'bloqueado', 'obsbloq', 'idvendedor', 'novo', 'dtmodificacao'])
+                                ->toArray());
+                                array_push($update, $auxiliar);
+                            }
+                        }catch (\Exception $e) {
+                            //return $this->traduzir("400 - Incorrect decimal value: 'fasdf' for column `renovar_teste`.`produtos`.`estoque` at row 1");
+                            array_push($update_er, [$auxiliar => '400 - ' . $this->traduzir(str_replace($replaces,"",$e->errorInfo[2]))]);
+                            $error_count++; 
+                            ///return $e;  
+                        }
+                    }
+                    array_push($responsecodssuc, ['update: ' => $update]);
+                    array_push($responsecodsermes, ['update: ' => $update_er]);
+                //}
+                //else if (isset($item['delete'])) {
+                    $clientes_delete = $request->input('delete'); // Obtém o array de updates
+                    $delete = [];
+                    $delete_er = [];
+                    foreach($clientes_delete as $clientes){
+                        $auxiliar = $clientes;
+                        //return $produto;
+                        Try{
+                            if (!DB::table('clientes')->where('cpfcnpj', $auxiliar)->first()) {
+                                array_push($delete_er, [$auxiliar => '404 - Cliente nao encontrado']);
+                                $error_count++;
+                            }else{ 
+                                DB::table('clientes')->where('cpfcnpj', $auxiliar)->delete();
+                                array_push($delete, $auxiliar);
+                            }
+                        }catch (\Exception $e) {
+                            array_push($delete_er, [$auxiliar => '400 - ' . $this->traduzir(str_replace($replaces,"",$e->errorInfo[2]))]);
+                            $error_count++; 
+                        }
+                    }
+                    array_push($responsecodssuc, ['delete: ' => $delete]);
+                    array_push($responsecodsermes, ['delete: ' => $delete_er]);
+                }
+                //else if (isset($item['create'])) {
+                    $clientes_create = $request->input('create'); // Obtém o array de updates
+                    $create = [];
+                    $create_er = [];
+                    foreach($clientes_create as $clientes){
+                        $auxiliar = $clientes;
+                        Try{
+                            $cli = Cliente::create($clientes);
+                            array_push($create, $clientes['cpfcnpj']);
+                        }catch (\Exception $e) {
+                            array_push($create_er, [$clientes['cpfcnpj'] => '400 - ' . $this->traduzir(str_replace($replaces,"",$e->errorInfo[2]))]);
+                            $error_count++; 
+                        }
+                    }
+                    array_push($responsecodssuc, ['create: ' => $create]);
+                    array_push($responsecodsermes, ['create: ' => $create_er]);                          
+                //}
+            //}
+            if ($error_count==0){
+                return response()->json([
+                    'sucesso' => $responsecodssuc], 200);        
+            }
+            return response()->json([
+                'erro' => $responsecodsermes,
+                    'sucesso' => $responsecodssuc], 200); 
+        
+    }
 
 
     public function changeDatabaseConnection(Request $request)

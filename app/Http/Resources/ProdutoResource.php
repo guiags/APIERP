@@ -34,7 +34,8 @@ class ProdutoResource extends JsonResource
             'lotes' => ProdutoloteResource::collection($this->whenLoaded('lotes')),
             //'grades' => $this->grades
             'grades' => ProdutogradeResource::collection($this->whenLoaded('grades')),
-            'dtmodificacao' => $this->dtmodificacao
+            'dtmodificacao' => $this->dtmodificacao,
+            'quantun' => $this->quantun
         ];
     }
 }

@@ -231,7 +231,7 @@ class ProdutoController extends Controller
 
             DB::table('produtos')
             ->where('codprod', $id)
-            ->update($request->only(['codprod', 'nome', 'descrcompleta', 'referencia', 'codgrupo', 'unidade', 'codbarras', 'preco', 'fotoprod', 'usagrade', 'estoque', 'usalote', 'inativo', 'dtmodificacao']));  
+            ->update($request->only(['codprod', 'nome', 'descrcompleta', 'referencia', 'codgrupo', 'unidade', 'codbarras', 'preco', 'fotoprod', 'usagrade', 'estoque', 'usalote', 'inativo', 'dtmodificacao', 'quantun']));  
 
 
             //return $precos;
