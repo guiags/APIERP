@@ -53,9 +53,26 @@ class CtreceberController extends Controller
                                 ], 404); 
         }
         else{
-            $ctreceber = Ctreceber::create($request->all());
+            $ctsreceber = $request->input('data');
+            $auxiliar = 0;
+            $responsecodssuc=[];
+            $responsecodsermes=[];
+            foreach($ctsreceber as $ctreceber){
+                Try{
+                Ctreceber::create($ctreceber);
+                    array_push($responsecodssuc, $ctreceber['coddoc']);
+                }catch(\Exception $e) {
+                    array_push($responsecodsermes, $ctreceber['coddoc']);
+                }
+            }
             $this->rolbackDatabaseConnection();
-            return new CtreceberResource($ctreceber);
+            if (Empty($responsecodsermes)){
+                return response()->json([
+                    'sucesso' => $responsecodssuc], 200);        
+            }
+            return response()->json([
+                'erro' => $responsecodsermes,
+                    'sucesso' => $responsecodssuc], 200);    
         }
     }
 

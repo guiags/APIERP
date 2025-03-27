@@ -125,11 +125,11 @@ class LotesController extends Controller
             //}
             if ($error_count==0){
                 return response()->json([
-                    'sucesso' => $responsecodssuc], 200);        
+                    'sucesso' => 'Lote Processado com Sucesso'/*$responsecodssuc*/], 200);        
             }
             return response()->json([
-                'erro' => $responsecodsermes,
-                    'sucesso' => $responsecodssuc], 200); 
+                'erro' => $responsecodsermes/*,
+                    'sucesso' => $responsecodssuc*/], 200); 
         
     }
 
@@ -224,11 +224,11 @@ class LotesController extends Controller
             //}
             if ($error_count==0){
                 return response()->json([
-                    'sucesso' => $responsecodssuc], 200);        
+                    'sucesso' => 'Lote processado com sucesso!'/*$responsecodssuc*/], 200);        
             }
             return response()->json([
-                'erro' => $responsecodsermes,
-                    'sucesso' => $responsecodssuc], 200); 
+                'erro' => $responsecodsermes/*,
+                    'sucesso' => $responsecodssuc*/], 200); 
         
     }
 
